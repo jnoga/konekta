@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" type="text/css" href="assets/stylesheets/style.css">
+    <script type="text/javascript" src="assets/libraries/jquery-1.9.0.min.js"></script>
+    <script type="text/javascript" src="assets/libraries/jquery-ui-1.10.0.custom.min.js"></script>
+    <script type="text/javascript" src="assets/libraries/strophe.js"></script>
+    <script type="text/javascript" src="assets/libraries/flXHR.js"></script>
+    <script type="text/javascript" src="assets/libraries/strophe.flxhr.min.js"></script>
+    <script type="text/javascript" src="assets/libraries/konekta-1.0.js"></script>
+  </head>
+  <body>
+
+    <aside id="menu-konekta">
+        <div id="roster-area">
+          <ul></ul>
+        </div>
+    </aside>
+    
+    <section id="login-section">
+      <header>
+          <h1>Konekta</h1>
+      </header>
+      <center>
+        <article id="login">
+          <div class="loginBox">
+             <div>JID: </div><input type="text" id="jid"/>
+             <div>Password: </div><input type="password" id="password"/>
+          </div>
+             <div class="button"><input type="button" id="log_button" value="Konekta!" /></div>
+          <div id="login_log"></div>
+        </article>
+      </center>
+    </section>
+
+    <section id="main-section">
+      <header>
+        <h1>Konekta</h1><span onclick="menuShow()" id="iconMenu">&#9776;</span>
+      </header>
+      <div id="chat-area"></div>
+    </section>
+
+  </body>
+</html>
