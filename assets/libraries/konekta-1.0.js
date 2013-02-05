@@ -165,8 +165,8 @@ var konekta = {
             $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
             $('#chat-' + jid_id).append(
                 "<div class='msgs'></div>" +
-                "<footer><input type='text' id='i"+jid+"' class='roster-input'>" +
-                "<span onclick='sendMsg(\""+jid+"\");' id='iconSend-"+jid_id+"+'>&#9998;</footer>");
+                "<footer><input type='text' id='i"+jid_id+"' class='roster-input'>" +
+                "<span onclick='sendMsg(\""+jid_id+"\", \""+jid+"\");' id='iconSend-"+jid_id+"+'>&#9998;</footer>");
             $('#chat-' + jid_id).data('jid', jid);
         }
         //Show/focus on the users chat
@@ -226,6 +226,25 @@ $(document).ready(function () {
             password: $('#password').val()
         });
     });
+    
+    $("#reg_button").click(function(){
+        var callback = function(status) {
+            if (status === Strophe.Status.REGISTER){
+                connection.register.fields.username= "";
+                connection.register.fields.password = "";
+                connection.register.fields.email = "";
+                connection.register.submit();
+            } else if (status === Strophe.Status.REGISTERED) {
+                console.log("registered!");
+                connection.authenticate();
+            } else if (status === Strophe.Status.CONNECTED) {
+                console.log("logged in!");
+            } else {
+                console.log("...");
+            }
+        };
+        connection.register.connect
+    });
 
     $("#follow").click(function(){
         console.log("follow trigger!");
@@ -261,6 +280,31 @@ $(document).bind('connect', function (ev, data) {
     });
 
     konekta.connection = conn;
+});
+
+$(document).bind('register', function(ev, data) {
+    console.log("trigger register detected...");
+    
+    var connection = new Strophe.Connection(
+        "http://10.92.12.178:7070/http-bind/");
+
+    var callback = function(status) {
+        if (status === Strophe.Status.REGISTER){
+            connection.register.fields.username= "";
+            connection.register.fields.password = "";
+            connection.register.fields.email = "";
+            connection.register.submit();
+        } else if (status === Strophe.Status.REGISTERED) {
+            console.log("registered!");
+            connection.authenticate();
+        } else if (status === Strophe.Status.CONNECTED) {
+            console.log("logged in!");
+        } else {
+            console.log("...");
+        }
+    };
+
+    connection.register.connect("localhost", callback);
 });
 
 $(document).bind('connected', function () {
@@ -314,8 +358,8 @@ function openChat(jid){
         $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
         $('#chat-' + jid_id).append(
             "<div class='msgs'></div>" +
-            "<footer><input type='text' id='i"+jid+"' class='roster-input'>" +
-            "<span onclick='sendMsg(\""+jid+"\");' id='iconSend-"+jid+"+'>&#9998;</footer>");
+            "<footer><input type='text' id='i"+jid_id+"' class='roster-input'>" +
+            "<span onclick='sendMsg(\""+jid_id+"\", \""+jid+"\");' id='iconSend-"+jid+"+'>&#9998;</footer>");
         $('#chat-' + jid_id).data('jid', jid);
     }
     //Show/focus on the users chat
@@ -324,30 +368,30 @@ function openChat(jid){
     });
     $('#chat-'+ jid_id).attr('style','display:block;');
     $('#chat-' + jid_id + ' input').focus();
-};
+}
 
-function sendMsg(jid) {
-    var elem = document.getElementById("i"+jid);
-    
-    if(elem.value != ""){
+function sendMsg(jid_id, jid) {
+    //var elem = document.getElementById(id);
+    var elem = $("#i"+jid_id);
+
+    if(elem.val() != ""){
         konekta.connection.send($msg({
             to: jid,
             "type": "chat"
-        }).c('body').t(elem.value));
+        }).c('body').t(elem.val()));
 
-        if($('#chat-' + jid + ' .msgs div:last-child').hasClass('right')){
-            $('#chat-' + jid + ' .msgs div:last-child').append("<hr/><p>"+elem.value+"</p>");
-            $('#chat-' + jid + ' .msgs').scrollTop($('#chat-' + jid + ' .msgs').height());
+        if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('right')){
+            $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><p>"+elem.val()+"</p>");
+            $('#chat-' + jid_id + ' .msgs').scrollTop($('#chat-' + jid_id + ' .msgs').height());
         }
         else{
-            console.log("appending msg..." + elem.value);
-            $('#chat-' + jid + ' .msgs').append("<div class='msg right'><p>"+elem.value+"</p></div>");
+            $('#chat-' + jid_id + ' .msgs').append("<div class='msg right'><p>"+elem.val()+"</p></div>");
         }
-        elem.value = '';
-        //$("#chat-"+jid+" #msgs").attr({ scrollTop: $("#chat-"+jid+" #msgs").attr("scrollHeight") });
-        //$("#chat-"+jid+" #msgs").scrollTop($("#chat-"+jid+" #msgs").height());
+        elem.val('');
+        $("#chat-"+jid_id+" #msgs").attr({ scrollTop: $("#chat-"+jid_id+" #msgs").attr("scrollHeight") });
+        $("#chat-"+jid_id+" #msgs").scrollTop($("#chat-"+jid_id+" #msgs").height());
     }
-};
+}
 
 function unfollow(jid){
     alert("You're going to unsubscribe "+jid);
