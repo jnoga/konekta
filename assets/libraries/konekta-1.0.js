@@ -382,14 +382,14 @@ function sendMsg(jid_id, jid) {
 
         if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('right')){
             $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><p>"+elem.val()+"</p>");
-            $('#chat-' + jid_id + ' .msgs').scrollTop($('#chat-' + jid_id + ' .msgs').height());
+            $('#chat-' + jid_id).scrollTop($('#chat-' + jid_id).height());
         }
         else{
             $('#chat-' + jid_id + ' .msgs').append("<div class='msg right'><p>"+elem.val()+"</p></div>");
         }
         elem.val('');
         $("#chat-"+jid_id+" #msgs").attr({ scrollTop: $("#chat-"+jid_id+" #msgs").attr("scrollHeight") });
-        $("#chat-"+jid_id+" #msgs").scrollTop($("#chat-"+jid_id+" #msgs").height());
+        $("#chat-"+jid_id).scrollTop($("#chat-"+jid_id).height());
     }
 }
 
