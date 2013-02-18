@@ -357,8 +357,7 @@ function openChat(jid){
         $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
         $('#chat-' + jid_id).append(
             "<div class='msgs'></div>" +
-            "<footer><input type='text' id='i"+jid_id+"' class='roster-input'>" +
-            "<span onclick='sendMsg(\""+jid_id+"\", \""+jid+"\");' id='iconSend-"+jid+"+'>&#9998;</footer>");
+            "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'></footer>");
         $('#chat-' + jid_id).data('jid', jid);
     }
     //Show/focus on the users chat

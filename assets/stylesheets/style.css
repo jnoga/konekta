@@ -73,7 +73,7 @@ section{
 	height: 220px;
 	background: white;
 	color:black;
-	border-radius: 15px;
+	border-radius: 5px;
 	box-shadow: 5px 5px 3px rgba(0,0,0,0.3);
 }
 
@@ -114,8 +114,8 @@ section{
 	margin:10px;
 	padding: 10px;
 	text-align: left;
-	border-radius: 15px;
-	box-shadow: 8px 8px 3px rgba(0,0,0,0.3);
+	border-radius: 5px;
+	box-shadow: 5px 5px 3px rgba(0,0,0,0.3);
 	background: white;
 	width: 60%;
 	overflow: hidden;
