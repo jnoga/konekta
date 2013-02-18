@@ -13,15 +13,15 @@ html {
 	overflow: hidden;
   	width: 100%;
   	height: 100%;
-  	margin: 0px; 
-	padding: 0px; 
+  	margin: 0px;
+	padding: 0px;
   	font-family: Calibri, Verdana, Ariel, sans-serif;
 }
 
 body {
 	width: 100%;
   	height: 100%;
-  	margin: 0px; 
+  	margin: 0px;
 	padding: 0px;
 }
 
@@ -56,7 +56,7 @@ aside{
 section{
 	width: 100%;
   	height: 100%;
-  	margin: 0px; 
+  	margin: 0px;
 	padding: 0px;
 	box-shadow: 15px 15px 15px 15px rgba(0,0,0,0.5);
 	background: rgb(21,138,237);
@@ -67,14 +67,14 @@ section{
 	position: absolute;
 	top:50%;
 	left:50%;
-	margin-left:-160px; 
-   	margin-top:-110px; 
-	width: 320px;
+	margin-left:-150px;
+   	margin-top:-110px;
+	width: 300px;
 	height: 220px;
 	background: white;
 	color:black;
 	border-radius: 15px;
-	box-shadow: 8px 8px 3px rgba(0,0,0,0.3);
+	box-shadow: 5px 5px 3px rgba(0,0,0,0.3);
 }
 
 #login h1{
@@ -157,14 +157,18 @@ section{
 
 #password{
 	font-size: 20px;
+	width: 205px;
 }
 
 #jid{
 	font-size: 20px;
+	width: 205px;
 }
 
-#log_button{
-	font-size: 25px;
+#log_button {
+width: 100%;
+font-size: 25px;
+margin-top: 15px;
 }
 
 .button{
@@ -203,7 +207,7 @@ li{
 	padding: 10px;
 	border: 1px solid #b6b6b7;
 	/*
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(226,226,226,1)), color-stop(50%,rgba(219,219,219,1)), color-stop(51%,rgba(209,209,209,1)), color-stop(100%,rgba(254,254,254,1))); 
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(226,226,226,1)), color-stop(50%,rgba(219,219,219,1)), color-stop(51%,rgba(209,209,209,1)), color-stop(100%,rgba(254,254,254,1)));
 	*/
 }
 
@@ -305,5 +309,17 @@ li{
 
 @media only screen and (max-width : 600px),
 only screen and (max-device-width : 600px){
+<<<<<<< HEAD
+  #login{
+  	height: 200px;
+  }
+  .loginBox {
+	font-size: 15px;
+	margin: 5px;
+  }
+  footer{height: 10%;}
+  #msgs{height: 82%;width: 100%;padding-top: 13%;}
+=======
   #msgs{width: 100%;}
+>>>>>>> 7b290fa05f7d32ca49ed9ed0180e420c82075c80
 }
