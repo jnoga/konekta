@@ -413,14 +413,14 @@ function menuHide(){
     $('#menu-konekta').css('z-index', '-1');
 }
 
-function enter(myfield,e,o){
+function enter(myfield,e,a,b){
     var keycode;
     if (window.event) keycode = window.event.keyCode;
     else if (e) keycode = e.which;
     else return true;
 
     if (keycode == 13){
-        sendMsg(o);
+        sendMsg(a,b);
         return false;
     }
     else
