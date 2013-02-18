@@ -65,12 +65,12 @@ var konekta = {
             }
 
         });
-        
+
         return true;
     },
 
     on_presence: function (presence) {
-        
+
         var ptype = $(presence).attr('type');
         var from = $(presence).attr('from');
         console.log(presence)
@@ -203,7 +203,7 @@ var konekta = {
             "<div class='msg left'>" +
             "&lt;<span>" +
             jid_id +
-            "</span>&gt;</div>");            
+            "</span>&gt;</div>");
             $('#chat-' + jid_id + ' .msg:last')
             .append(body);
             konekta.scroll_chat(jid_id);
@@ -226,7 +226,7 @@ $(document).ready(function () {
             password: $('#password').val()
         });
     });
-    
+
     $("#reg_button").click(function(){
         var callback = function(status) {
             if (status === Strophe.Status.REGISTER){
@@ -260,12 +260,12 @@ $(window).unload(function() {
 
 $(document).bind('connect', function (ev, data) {
     console.log("trigger connect detected...");
-	
+
     var conn = new Strophe.Connection(
-        "http://10.92.12.178:7070/http-bind/");
+        "http://5-39.83.108:7070/http-bind/");
 
     conn.connect(data.jid, data.password, function (status) {
-    	
+
         if (status === Strophe.Status.CONNECTED) {
             $(document).trigger('connected');
         } else if (status === Strophe.Status.AUTHENTICATING) {
@@ -284,7 +284,7 @@ $(document).bind('connect', function (ev, data) {
 
 $(document).bind('register', function(ev, data) {
     console.log("trigger register detected...");
-    
+
     var connection = new Strophe.Connection(
         "http://10.92.12.178:7070/http-bind/");
 
