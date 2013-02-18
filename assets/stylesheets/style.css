@@ -157,10 +157,12 @@ section{
 
 #password{
 	font-size: 20px;
+	width: 205px;
 }
 
 #jid{
 	font-size: 20px;
+	width: 205px;
 }
 
 #log_button {
