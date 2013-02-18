@@ -254,11 +254,9 @@ $(document).ready(function () {
     });
 });
 
-window.onbeforeunload = function(){alert("you just tried to leave the page");};
 
 $(window).unload(function() {
     $(document).trigger('disconnected');
-    alert("Are you sure?");
 });
 
 $(document).bind('connect', function (ev, data) {
