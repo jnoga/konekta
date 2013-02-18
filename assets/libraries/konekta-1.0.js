@@ -199,7 +199,6 @@ var konekta = {
         }
         if (body) {
             // add the new message
-<<<<<<< HEAD
             if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('left')){
                 $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><p>"+body+"</p>");
                 $('#chat-' + jid_id).scrollTop($('#chat-' + jid_id).height());
@@ -207,16 +206,6 @@ var konekta = {
             else{
                 $('#chat-' + jid_id + ' .msgs').append("<div class='msg left'><p>"+body+"</p></div>");
             }
-=======
-            $('#chat-' + jid_id + ' .msgs').append(
-            "<div class='msg left'>" +
-            "&lt;<span>" +
-            jid_id +
-            "</span>&gt;</div>");
-            $('#chat-' + jid_id + ' .msg:last')
-            .append(body);
-            konekta.scroll_chat(jid_id);
->>>>>>> 316449279911a322bb83fea44323b928292d09a0
         }
         return true;
     },
