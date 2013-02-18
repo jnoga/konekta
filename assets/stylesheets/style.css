@@ -31,7 +31,7 @@ header {
 	width: 100%;
 	background-color: rgb(12,82,141);
 	line-height: 40px;
-	height: 6%;
+	height: 40px;
 	border-bottom: solid 2px rgba(0,0,0,0.1);
 }
 
@@ -97,15 +97,16 @@ section{
 	height: 100%;
 	width: 100%;
 	color:black;
-}
-
-.msgs{
-	padding-top: 4%;
-	background: rgb(21,138,237);
 	overflow-y: scroll;
 	-webkit-overflow-scrolling:touch;
   	-webkit-box-flex:1;
-	height: 92%;
+}
+
+.msgs{
+	margin-top: 55px;
+	margin-bottom: 65px;
+	background: rgb(21,138,237);
+	overflow: hidden;
 	width: 90%;
 }
 
@@ -175,10 +176,10 @@ footer {
 	font-size: 18px;
 	bottom:0px;
 	position:fixed;
-	background-color: rgba(0,0,0,0.7);
+	background-color: #062846;
 	text-align: center;
-	height: 8%;
-	line-height: 50px;
+	height: 55px;
+	line-height: 55px;
 	color:white;
 }
 .roster-input{
@@ -304,7 +305,5 @@ li{
 
 @media only screen and (max-width : 600px),
 only screen and (max-device-width : 600px){
-  header{height: 8%;}
-  footer{height: 10%;}
-  #msgs{height: 82%;width: 100%;padding-top: 13%;}
+  #msgs{width: 100%;}
 }
