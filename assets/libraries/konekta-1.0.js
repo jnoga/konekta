@@ -199,14 +199,13 @@ var konekta = {
         }
         if (body) {
             // add the new message
-            $('#chat-' + jid_id + ' .msgs').append(
-            "<div class='msg left'>" +
-            "&lt;<span>" +
-            jid_id +
-            "</span>&gt;</div>");
-            $('#chat-' + jid_id + ' .msg:last')
-            .append(body);
-            konekta.scroll_chat(jid_id);
+            if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('left')){
+                $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><p>"+body+"</p>");
+                $('#chat-' + jid_id).scrollTop($('#chat-' + jid_id).height());
+            }
+            else{
+                $('#chat-' + jid_id + ' .msgs').append("<div class='msg left'><p>"+body+"</p></div>");
+            }
         }
         return true;
     },
