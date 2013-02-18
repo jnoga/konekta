@@ -256,6 +256,7 @@ $(document).ready(function () {
 
 $(window).unload(function() {
     $(document).trigger('disconnected');
+    alert("Are you sure?");
 });
 
 $(document).bind('connect', function (ev, data) {
