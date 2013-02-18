@@ -62,6 +62,17 @@ section{
 	background: rgb(21,138,237);
 }
 
+#home {
+	margin: 0px;
+	padding: 0px;
+	height: 100%;
+	width: 100%;
+	color:black;
+	overflow-y: scroll;
+	-webkit-overflow-scrolling:touch;
+  	-webkit-box-flex:1;
+}
+
 #login {
 	display:block;
 	position: absolute;
@@ -190,6 +201,14 @@ footer {
 	width:80%;
 	border-radius: 15px;
 	font-size: 18px;
+}
+
+#roster-area {
+	margin-top: 55px;
+	margin-bottom: 65px;
+	background: rgb(21,138,237);
+	overflow: hidden;
+	width: 90%;
 }
 
 ul{

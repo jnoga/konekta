@@ -172,6 +172,7 @@ var konekta = {
         $(".chat").each(function( index ){
             $(this).attr('style','display:none;');
         });
+        $("#home").attr('style', 'display: none;');
         $('#chat-'+ jid_id).attr('style','display:block;');
         $('#chat-' + jid_id + ' input').focus();
         //Print the message
@@ -364,6 +365,7 @@ function openChat(jid){
     $(".chat").each(function( index ){
         $(this).attr('style','display:none;');
     });
+    $("#home").attr('style', 'display: none;');
     $('#chat-'+ jid_id).attr('style','display:block;');
     $('#chat-' + jid_id + ' input').focus();
 }
@@ -401,17 +403,15 @@ function changeSection(){
     $("#main-section").attr("style","display:block;");
 }
 
-function menuShow(){
-    document.getElementById('main-section').className ='menuShow';
-    $('#iconMenu').attr('onclick', 'menuHide()');
-    $('#menu-konekta').css('z-index', '0');
+function home(){
+
+    $(".chat").each(function( index ){
+        $(this).attr('style','display:none;');
+    });
+    $("#home").attr('style', 'display: block;');
+
 }
 
-function menuHide(){
-    document.getElementById('main-section').className ='menuHide';
-    $('#iconMenu').attr('onclick', 'menuShow()');
-    $('#menu-konekta').css('z-index', '-1');
-}
 
 function enter(myfield,e,a,b){
     var keycode;
