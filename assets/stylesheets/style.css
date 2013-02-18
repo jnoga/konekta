@@ -119,6 +119,7 @@ section{
 	background: rgb(21,138,237);
 	overflow: hidden;
 	width: 90%;
+	
 }
 
 .msg{
@@ -335,6 +336,5 @@ only screen and (max-device-width : 600px){
 	font-size: 15px;
 	margin: 5px;
   }
-  footer{height: 10%;}
   #msgs{width: 100%;}
 }
