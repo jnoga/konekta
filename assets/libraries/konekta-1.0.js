@@ -165,8 +165,7 @@ var konekta = {
             $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
             $('#chat-' + jid_id).append(
                 "<div class='msgs'></div>" +
-                "<footer><input type='text' id='i"+jid_id+"' class='roster-input'>" +
-                "<span onclick='sendMsg(\""+jid_id+"\", \""+jid+"\");' id='iconSend-"+jid_id+"+'>&#9998;</footer>");
+                "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'>");
             $('#chat-' + jid_id).data('jid', jid);
         }
         //Show/focus on the users chat
@@ -415,4 +414,18 @@ function menuHide(){
     document.getElementById('main-section').className ='menuHide';
     $('#iconMenu').attr('onclick', 'menuShow()');
     $('#menu-konekta').css('z-index', '-1');
+}
+
+function enter(myfield,e,o){
+    var keycode;
+    if (window.event) keycode = window.event.keyCode;
+    else if (e) keycode = e.which;
+    else return true;
+
+    if (keycode == 13){
+        sendMsg(o);
+        return false;
+    }
+    else
+        return true;
 }
