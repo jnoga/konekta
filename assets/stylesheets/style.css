@@ -163,8 +163,10 @@ section{
 	font-size: 20px;
 }
 
-#log_button{
-	font-size: 25px;
+#log_button {
+width: 100%;
+font-size: 25px;
+margin-top: 15px;
 }
 
 .button{
