@@ -103,6 +103,7 @@ section{
 }
 
 #chat-area {
+	display: none;
 	height: 100%;
 	width: 100%;
 }
@@ -124,7 +125,7 @@ section{
 	background: rgb(21,138,237);
 	overflow: hidden;
 	width: 90%;
-	
+
 }
 
 .msg{
