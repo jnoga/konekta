@@ -169,6 +169,7 @@ var konekta = {
             $('#chat-' + jid_id).data('jid', jid);
         }
         //Show/focus on the users chat
+        $("#chat-area").attr('style', 'display: block;');
         $(".chat").each(function( index ){
             $(this).attr('style','display:none;');
         });
@@ -363,6 +364,7 @@ function openChat(jid){
         $('#chat-' + jid_id).data('jid', jid);
     }
     //Show/focus on the users chat
+    $("#chat-area").attr('style', 'display: block;');
     $(".chat").each(function( index ){
         $(this).attr('style','display:none;');
     });
@@ -404,12 +406,8 @@ function changeSection(){
 }
 
 function home(){
-
-    $(".chat").each(function( index ){
-        $(this).attr('style','display:none;');
-    });
+    $("#chat-area").attr('style', 'display: none;');
     $("#home").attr('style', 'display: block;');
-
 }
 
 
