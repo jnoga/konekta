@@ -223,7 +223,7 @@ $(document).ready(function () {
         $('#password').attr('disabled', 'disabled');
         $('#log_button').attr('disabled', 'disabled');
         $(document).trigger('connect', {
-            jid: $('#jid').val(),
+            jid: $('#jid').val()+'@konekta',
             password: $('#password').val()
         });
     });
@@ -381,7 +381,7 @@ function sendMsg(jid_id, jid) {
         konekta.connection.send($msg({
             to: jid,
             "type": "chat"
-        }).c('body').t(elem.val()));
+        }).c('body').t(elem.val()).c('request', {xmlns: 'urn:xmpp:receipts'}));
 
         if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('right')){
             $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><p>"+elem.val()+"</p>");

@@ -26,6 +26,8 @@ body {
 }
 
 header {
+	right: 0px;
+	left: 0px;
 	text-align: center;
 	position: fixed;
 	top: 0px;
