@@ -268,7 +268,7 @@ $(document).bind('connect', function (ev, data) {
     console.log("trigger connect detected...");
 
     var conn = new Strophe.Connection(
-        "http://5.39.83.108:7070/http-bind/");
+        "http://10.92.12.226:7070/http-bind/");
 
     conn.connect(data.jid, data.password, function (status) {
 
@@ -292,7 +292,7 @@ $(document).bind('register', function(ev, data) {
     console.log("trigger register detected...");
 
     var connection = new Strophe.Connection(
-        "http://5.39.83.108:7070/http-bind/");
+        "http://10.92.12.226:7070/http-bind/");
 
     var callback = function(status) {
         if (status === Strophe.Status.REGISTER){
@@ -323,7 +323,7 @@ $(document).bind('connected', function () {
 
     //Enable receiving messages
     konekta.connection.addHandler(konekta.on_message, null, 'message', null, null, null);
-    konekta.connection.addReceiptHandler(konekta.on_receipt, 'chat', null, null);
+    konekta.connection.receipts.addReceiptHandler(konekta.on_receipt, 'chat', null, null);
 
 
     changeSection();
@@ -390,8 +390,9 @@ function sendMsg(jid_id, jid) {
             "type": "chat"
         }).c('body').t(elem.val());
 
+        //konekta.connection.send(msg);
 
-        var mid = konekta.connection.sendMessage();
+        var mid = konekta.connection.receipts.sendMessage(msg);
 
         if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('right')){
             $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><p>"+elem.val()+"</p>");

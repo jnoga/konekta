@@ -9,8 +9,8 @@ Strophe.addConnectionPlugin('receipts', {
         this._conn = conn;
         Strophe.addNamespace('RECEIPTS', 'urn:xmpp:receipts');
     },
-	
-	
+
+
     statusChanged: function (status) {
 		if (status === Strophe.Status.CONNECTED || status === Strophe.Status.ATTACHED) {
 			// set up handlers for receipts
@@ -19,7 +19,7 @@ Strophe.addConnectionPlugin('receipts', {
 			setTimeout(function(){that.resendQueue();},5000);
 		}
 	},
-	
+
 	/*
 	_onRequestReceived: function(msg){
 		this._processReceipt(msg);
@@ -35,7 +35,7 @@ Strophe.addConnectionPlugin('receipts', {
     */
     sendMessage: function(msg) {
         var id = this._conn.getUniqueId();
-        
+
         msg.tree().setAttribute('id', id);
 
         var request = Strophe.xmlElement('request', {'xmlns': Strophe.NS.RECEIPTS});
@@ -45,15 +45,17 @@ Strophe.addConnectionPlugin('receipts', {
         this._retries[id] = 0;
 
         this._conn.send(msg);
-        
+
         this.resendMessage(id);
-        
+
+        console.log(msg);
+
         return id;
-        
+
     },
-    
+
     /*
-    ** resend queued message 
+    ** resend queued message
     */
     resendMessage: function(id){
 		var that = this;
@@ -70,16 +72,16 @@ Strophe.addConnectionPlugin('receipts', {
 					//console.debug('message could not be delivered after ' + that._resendCount + ' attempts');
 					return;
 				}
-				
-				// FIX: use our actual jid in case we disconnected and changed jid								
+
+				// FIX: use our actual jid in case we disconnected and changed jid
 				that._msgQueue[id].tree().setAttribute('from', that._conn.jid);
-				
+
 				that._conn.send(that._msgQueue[id]);
 				that.resendMessage(id);
 			}
 		},this._resendTime);
 	},
-	
+
 	/* addMessageHandler
     ** add a message handler that handles XEP-0184 message receipts
     */
@@ -88,7 +90,7 @@ Strophe.addConnectionPlugin('receipts', {
 
         var proxyHandler = function(msg) {
             that._processReceipt(msg);
-         
+
             // call original handler
             return handler(msg);
         };
@@ -96,18 +98,18 @@ Strophe.addConnectionPlugin('receipts', {
         this._conn.addHandler(proxyHandler, Strophe.NS.RECEIPTS, 'message',
                               type, null, from, options);
     },
-    
+
     /*
 	 * process a XEP-0184 message receipts
 	 * send recept on request
-	 * remove msg from queue on received 
+	 * remove msg from queue on received
 	*/
 	_processReceipt: function(msg){
 		var id = msg.getAttribute('id'),
 			from = msg.getAttribute('from'),
 			req = msg.getElementsByTagName('request'),
 			rec = msg.getElementsByTagName('received');
-			
+
 			// check for request in message
             if (req.length > 0) {
 				// send receipt
@@ -123,9 +125,9 @@ Strophe.addConnectionPlugin('receipts', {
 					delete this._msgQueue[recv_id];
 					delete this._retries[recv_id];
 				}
-            }			
+            }
 	},
-	
+
 	resendQueue: function(){
 		if (!this._conn.connected) {
 			var that = this;
@@ -136,7 +138,7 @@ Strophe.addConnectionPlugin('receipts', {
 			if (this._msgQueue.hasOwnProperty(id)) {
 			   this._conn.send(this._msgQueue[id]);
 			}
-		}	
+		}
 	},
 
     getUnreceivedMsgs: function() {
