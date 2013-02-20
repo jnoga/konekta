@@ -12,6 +12,10 @@ var konekta = {
         console.log(msg);
     },
 
+    on_receipt: function(msg){
+        console.log(msg);
+    },
+
     on_roster: function (iq) {
         console.log('roster: ');
         console.log(iq);
@@ -288,7 +292,7 @@ $(document).bind('register', function(ev, data) {
     console.log("trigger register detected...");
 
     var connection = new Strophe.Connection(
-        "http://10.92.12.178:7070/http-bind/");
+        "http://5.39.83.108:7070/http-bind/");
 
     var callback = function(status) {
         if (status === Strophe.Status.REGISTER){
@@ -319,6 +323,8 @@ $(document).bind('connected', function () {
 
     //Enable receiving messages
     konekta.connection.addHandler(konekta.on_message, null, 'message', null, null, null);
+    konekta.connection.addReceiptHandler(konekta.on_receipt, 'chat', null, null);
+
 
     changeSection();
 
@@ -377,11 +383,15 @@ function sendMsg(jid_id, jid) {
     //var elem = document.getElementById(id);
     var elem = $("#i"+jid_id);
 
-    if(elem.val() != ""){
-        konekta.connection.send($msg({
+    if(elem.val() !== ""){
+
+        var msg = $msg({
             to: jid,
             "type": "chat"
-        }).c('body').t(elem.val()).c('request', {xmlns: 'urn:xmpp:receipts'}));
+        }).c('body').t(elem.val());
+
+
+        var mid = konekta.connection.sendMessage();
 
         if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('right')){
             $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><p>"+elem.val()+"</p>");
