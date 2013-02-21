@@ -171,6 +171,7 @@ var konekta = {
         if ($('#chat-' + jid_id).length === 0) {
             $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
             $('#chat-' + jid_id).append(
+                "<header><div onclick='home();' id='iconMenu'>&#8962;</div><h1>"+jid+"</h1></header>" +
                 "<div class='msgs'></div>" +
                 "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'></footer>");
             $('#chat-' + jid_id).data('jid', jid);
@@ -287,7 +288,7 @@ $(document).bind('connect', function (ev, data) {
     console.log("trigger connect detected...");
 
     var conn = new Strophe.Connection(
-        "http://localhost:7070/http-bind/");
+        "http://5.39.83.108:7070/http-bind/");
 
     conn.connect(data.jid, data.password, function (status) {
 
@@ -311,7 +312,7 @@ $(document).bind('register', function(ev, data) {
     console.log("trigger register detected...");
 
     var connection = new Strophe.Connection(
-        "http://localhost:7070/http-bind/");
+        "http://5.39.83.108:7070/http-bind/");
 
     var callback = function(status) {
         if (status === Strophe.Status.REGISTER){
@@ -386,6 +387,7 @@ function openChat(jid){
     if ($('#chat-' + jid_id).length === 0) {
         $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
         $('#chat-' + jid_id).append(
+            "<header><div onclick='home();' id='iconMenu'>&#8962;</div><h1>"+jid+"</h1></header>" +
             "<div class='msgs'></div>" +
             "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'></footer>");
         $('#chat-' + jid_id).data('jid', jid);
