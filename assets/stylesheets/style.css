@@ -26,6 +26,7 @@ body {
 }
 
 header {
+	z-index: 2;
 	right: 0px;
 	left: 0px;
 	text-align: center;
@@ -158,10 +159,10 @@ section{
 	background: rgb(21,138,237);
 	overflow: hidden;
 	width: 90%;
-
 }
 
 .msg{
+	position: relative;
 	margin:10px;
 	padding: 10px;
 	text-align: left;
@@ -169,7 +170,7 @@ section{
 	box-shadow: 5px 5px 3px rgba(0,0,0,0.3);
 	background: white;
 	width: 60%;
-	overflow: hidden;
+
 }
 
 .msg p{
@@ -180,8 +181,15 @@ section{
 }
 
 .left{float:left;background: rgb(244,244,244);}
+.left .hora{position:absolute;right:-50px;color:white;font-size: 14px;font-style:italic;margin-top:11px;}
 
 .right{float:right;background: rgb(168,223,254);}
+.right .hora{position:absolute;left:-70px;color:white;font-size: 14px;font-style:italic;margin-top:7px;}
+
+.check{
+	font-size: 18px;
+	margin-left: 5px;
+}
 
 .loginBox{
 	margin-top: 20px;
@@ -241,6 +249,7 @@ section{
 }
 
 footer {
+	z-index: 2;
 	width: 100%;
 	font-size: 18px;
 	bottom:0px;
