@@ -14,6 +14,7 @@ var konekta = {
 
     on_receipt: function(msg){
         console.log(msg);
+        return true;
     },
 
     on_roster: function (iq) {
@@ -227,7 +228,7 @@ $(document).ready(function () {
         $('#password').attr('disabled', 'disabled');
         $('#log_button').attr('disabled', 'disabled');
         $(document).trigger('connect', {
-            jid: $('#jid').val()+'@konekta',
+            jid: $('#jid').val()+'@localhost',
             password: $('#password').val()
         });
     });
@@ -260,9 +261,24 @@ $(document).ready(function () {
 });
 
 
+
+// window.onbeforeunload = function(){
+//     return " ";
+// };
+
+// $(window).on('beforeunload', function() {
+
+//     return "Are you shure?";
+
+// });
+
 $(window).unload(function() {
+    console.log("cerrando sesión")
     $(document).trigger('disconnected');
 });
+
+
+
 
 $(document).bind('connect', function (ev, data) {
     console.log("trigger connect detected...");
@@ -323,7 +339,7 @@ $(document).bind('connected', function () {
 
     //Enable receiving messages
     konekta.connection.addHandler(konekta.on_message, null, 'message', null, null, null);
-    konekta.connection.receipts.addReceiptHandler(konekta.on_receipt, 'chat', null, null);
+    konekta.connection.receipts.addReceiptHandler(konekta.on_receipt, null, null, null);
 
 
     changeSection();
@@ -343,10 +359,13 @@ $(document).bind('authfail', function () {
 });
 
 $(document).bind('disconnected', function () {
-    konekta.log("Connection terminated.");
-
     // remove dead connection object
-    konekta.connection = null;
+    // konekta.connection.send($pres({"type":"unavailable"}));
+    konekta.connection.sync = true;
+    konekta.connection.flush();
+    konekta.connection.disconnect();
+    konekta.connection=null;
+    konekta.log("Connection terminated.");
 });
 
 $(document).bind('contact_added', function (ev,data) {
@@ -391,7 +410,9 @@ function sendMsg(jid_id, jid) {
         }).c('body').t(elem.val());
 
         //konekta.connection.send(msg);
-
+        if(!konekta.connection){
+            konekta.connection.send($pres());
+        }
         var mid = konekta.connection.receipts.sendMessage(msg);
 
         if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('right')){
