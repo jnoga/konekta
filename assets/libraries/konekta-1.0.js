@@ -228,7 +228,7 @@ $(document).ready(function () {
         $('#password').attr('disabled', 'disabled');
         $('#log_button').attr('disabled', 'disabled');
         $(document).trigger('connect', {
-            jid: $('#jid').val()+'@localhost',
+            jid: $('#jid').val()+'@konekta',
             password: $('#password').val()
         });
     });
@@ -284,7 +284,7 @@ $(document).bind('connect', function (ev, data) {
     console.log("trigger connect detected...");
 
     var conn = new Strophe.Connection(
-        "http://10.92.12.226:7070/http-bind/");
+        "http://localhost:7070/http-bind/");
 
     conn.connect(data.jid, data.password, function (status) {
 
@@ -308,7 +308,7 @@ $(document).bind('register', function(ev, data) {
     console.log("trigger register detected...");
 
     var connection = new Strophe.Connection(
-        "http://10.92.12.226:7070/http-bind/");
+        "http://localhost:7070/http-bind/");
 
     var callback = function(status) {
         if (status === Strophe.Status.REGISTER){
@@ -416,7 +416,7 @@ function sendMsg(jid_id, jid) {
         var mid = konekta.connection.receipts.sendMessage(msg);
 
         if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('right')){
-            $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><p>"+elem.val()+"</p>");
+            $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><p id='"+mid+"'>"+elem.val()+"</p>");
             $('#chat-' + jid_id).scrollTop($('#chat-' + jid_id + ' .msgs').height());
         }
         else{
