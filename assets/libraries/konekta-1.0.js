@@ -344,8 +344,7 @@ $(document).bind('connected', function () {
     konekta.connection.addHandler(konekta.on_message, null, 'message', null, null, null);
     konekta.connection.receipts.addReceiptHandler(konekta.on_receipt, null, null, null);
 
-
-    changeSection();
+    changeToMainSection();
 
 });
 
@@ -436,7 +435,7 @@ function unfollow(jid){
     //konekta.connection.send($pres({to: konekta.pending_subscriber, "type": "subscribed"}));
 }
 
-function changeSection(){
+function changeToMainSection(){
     $("#login-section").attr("style","display:none;");
     $("#main-section").attr("style","display:block;");
 }
