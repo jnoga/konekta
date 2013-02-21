@@ -171,6 +171,7 @@ var konekta = {
         if ($('#chat-' + jid_id).length === 0) {
             $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
             $('#chat-' + jid_id).append(
+                "<header><div onclick='home();' id='iconMenu'>&#8962;</div><h1>"+jid+"</h1></header>" +
                 "<div class='msgs'></div>" +
                 "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'></footer>");
             $('#chat-' + jid_id).data('jid', jid);
@@ -387,6 +388,7 @@ function openChat(jid){
     if ($('#chat-' + jid_id).length === 0) {
         $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
         $('#chat-' + jid_id).append(
+            "<header><div onclick='home();' id='iconMenu'>&#8962;</div><h1>"+jid+"</h1></header>" +
             "<div class='msgs'></div>" +
             "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'></footer>");
         $('#chat-' + jid_id).data('jid', jid);
