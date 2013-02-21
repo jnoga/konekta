@@ -46,9 +46,7 @@ Strophe.addConnectionPlugin('receipts', {
 
         this._conn.send(msg);
 
-        this.resendMessage(id);
-
-        console.log(msg);
+        //this.resendMessage(id);
 
         return id;
 

@@ -223,6 +223,14 @@ var konekta = {
 
     scroll_chat: function (jid_id) {
         scroll(jid_id);
+    },
+
+    on_register: function(iq){
+        console.log('register: ');
+        console.log(iq);
+        $(iq).children('query').children().each(function () {
+            console($this);
+        });   
     }
 };
 
@@ -288,7 +296,7 @@ $(document).bind('connect', function (ev, data) {
     console.log("trigger connect detected...");
 
     var conn = new Strophe.Connection(
-        "http://5.39.83.108:7070/http-bind/");
+        "http://localhost:7070/http-bind/");
 
     conn.connect(data.jid, data.password, function (status) {
 
@@ -323,14 +331,12 @@ $(document).bind('register', function(ev, data) {
         } else if (status === Strophe.Status.REGISTERED) {
             console.log("registered!");
             connection.authenticate();
-        } else if (status === Strophe.Status.CONNECTED) {
-            console.log("logged in!");
         } else {
             console.log("...");
         }
     };
 
-    connection.register.connect("localhost", callback);
+    connection.register.connect("konekta", callback);
 });
 
 $(document).bind('connected', function () {
@@ -440,6 +446,13 @@ function unfollow(jid){
 function changeToMainSection(){
     $("#login-section").attr("style","display:none;");
     $("#main-section").attr("style","display:block;");
+}
+
+function changeToRegSection(){
+    $("#login-section").attr("style","display:none;");
+    var iq = $iq({type:'get'}).c('query', {xmlns: 'jabber:iq:register'});
+    konekta.connection.sendIQ(iq, konekta.on_register);
+    $("#register-section").attr("style","display:block;");
 }
 
 function home(){

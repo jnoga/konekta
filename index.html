@@ -17,8 +17,6 @@
   </head>
   <body>
 
-
-
     <section id="login-section">
       <header>
           <h1>Konekta</h1>
@@ -30,7 +28,51 @@
              <div>Password: </div><input type="password" id="password"/>
              <input type="button" id="log_button" value="Konekta!" />
           </form>
+          <a href="#" onclick="changeToRegSection();" id="reg_link">Register</a>
           <div id="login_log"></div>
+        </article>
+      </center>
+    </section>
+
+    <section id="register-section">
+      <header>
+          <h1>Konekta - Register</h1>
+      </header>
+      <center>
+        <article id="register">
+          <form class="registerBox">
+            <div class="row">
+              <div>Username (JID)*: </div><input type="text" id="rjid"/>
+            </div>
+            <div class="row">
+              <div>Email*: </div><input type="email" id="email"/>
+            </div>
+            <div class="row">
+              <div>Name*: </div><input type="text" id="name"/>
+            </div>
+            <div class="row">
+              <div>Surname (JID): </div><input type="text" id="surname"/>
+            </div>
+            <div class="row">
+              <div>Gender: </div>
+              <select id="gender">
+                <option value="">Select an Option</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+            <div class="row">
+              <div>Age: </div><input type="text" id="age" size="4"/>
+            </div>
+            <div class="row">
+              <div>Password*: </div><input type="password" id="rpassword"/>
+            </div>
+            <div class="row">
+              <div>Repeat Password*: </div><input type="password" id="rrpassword"/>
+            </div>
+            <input type="button" id="reg_button" value="Register!" />
+          </form>
+          <div id="reg_log"></div>
         </article>
       </center>
     </section>

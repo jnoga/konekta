@@ -95,6 +95,37 @@ section{
 	box-shadow: 5px 5px 3px rgba(0,0,0,0.3);
 }
 
+#register {
+	background: none repeat scroll 0 0 white;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 5px 5px 3px rgba(0, 0, 0, 0.3);
+    color: black;
+    display: block;
+    left: 36%;
+    position: absolute;
+    top: 15%;
+    width: 500px;
+}
+
+#register div.row{
+	width: 100%;
+	height: 40px;
+}
+
+#register div.row div{
+	float: left;
+	width: 50%;
+}
+
+#register div.row input, select{
+	float: right;
+	margin-right: 10px;
+}
+
+#register-section{
+	display: none;
+}
+
 #login h1{
 	text-align: left;
 	margin: 20px;
@@ -194,10 +225,15 @@ section{
 	width: 205px;
 }
 
-#log_button {
-width: 100%;
-font-size: 25px;
-margin-top: 15px;
+#log_button, #reg_button {
+	width: 100%;
+	font-size: 25px;
+	margin-top: 15px;
+}
+
+#reg_button {
+	width: 65%;
+	margin: 0 auto !important; 
 }
 
 .button{
