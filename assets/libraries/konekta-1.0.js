@@ -14,6 +14,9 @@ var konekta = {
 
     on_receipt: function(msg){
         console.log(msg);
+        var item = $(msg).find('received')
+        var id = item.attr("id");
+        $("#"+id+" .check").append("&#10003;");
         return true;
     },
 
@@ -210,11 +213,11 @@ var konekta = {
             // add the new message
             var d_string = date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
             if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('left')){
-                $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><p>"+d_string+" | "+body+"</p>");
+                $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><div class='hora'>"+d_string+"</div><p>"+body+"</p>");
                 $('#chat-' + jid_id).scrollTop($('#chat-' + jid_id + ' .msgs').height());
             }
             else{
-                $('#chat-' + jid_id + ' .msgs').append("<div class='msg left'><p>"+d_string+" | "+body+"</p></div>");
+                $('#chat-' + jid_id + ' .msgs').append("<div class='msg left'><div class='hora'>"+d_string+"</div><p>"+body+"</p></div>");
                 $('#chat-' + jid_id).scrollTop($('#chat-' + jid_id + ' .msgs').height());
             }
         }
@@ -422,11 +425,11 @@ function sendMsg(jid_id, jid) {
         var mid = konekta.connection.receipts.sendMessage(msg);
         var d_string = date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
         if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('right')){
-            $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><p id='"+mid+"'>"+d_string+" | "+elem.val()+"</p>");
+            $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><div id='"+mid+"' class='hora'>"+d_string+"<span class='check'>&#10003;</span></div><p>"+elem.val()+"</p>");
             $('#chat-' + jid_id).scrollTop($('#chat-' + jid_id + ' .msgs').height());
         }
         else{
-            $('#chat-' + jid_id + ' .msgs').append("<div class='msg right'><p>"+d_string+" | "+elem.val()+"</p></div>");
+            $('#chat-' + jid_id + ' .msgs').append("<div class='msg right'><div id='"+mid+"' class='hora'>"+d_string+"<span class='check'>&#10003;</span></div><p>"+elem.val()+"</p></div>");
             $('#chat-' + jid_id).scrollTop($('#chat-' + jid_id + ' .msgs').height());
         }
         elem.val('');
