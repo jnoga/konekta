@@ -311,7 +311,7 @@ $(document).bind('register', function(ev, data) {
     console.log("trigger register detected...");
 
     var connection = new Strophe.Connection(
-        "http://10.92.12.226:7070/http-bind/");
+        "http://localhost:7070/http-bind/");
 
     var callback = function(status) {
         if (status === Strophe.Status.REGISTER){
@@ -420,7 +420,7 @@ function sendMsg(jid_id, jid) {
         var mid = konekta.connection.receipts.sendMessage(msg);
         var d_string = date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
         if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('right')){
-            $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><p>"+d_string+" | "+elem.val()+"</p>");
+            $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><p id='"+mid+"'>"+d_string+" | "+elem.val()+"</p>");
             $('#chat-' + jid_id).scrollTop($('#chat-' + jid_id + ' .msgs').height());
         }
         else{
