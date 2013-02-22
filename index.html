@@ -11,6 +11,7 @@
     <script type="text/javascript" src="assets/libraries/jquery-ui-1.10.0.custom.min.js"></script>
     <script type="text/javascript" src="assets/libraries/strophe.js"></script>
     <script type="text/javascript" src="assets/libraries/strophe.receipts.js"></script>
+    <script type="text/javascript" src="assets/libraries/strophe.register.js"></script>
     <script type="text/javascript" src="assets/libraries/flXHR.js"></script>
     <script type="text/javascript" src="assets/libraries/strophe.flxhr.min.js"></script>
     <script type="text/javascript" src="assets/libraries/konekta-1.0.js"></script>
@@ -51,7 +52,7 @@
               <div>Name*: </div><input type="text" id="name"/>
             </div>
             <div class="row">
-              <div>Surname (JID): </div><input type="text" id="surname"/>
+              <div>Surname: </div><input type="text" id="surname"/>
             </div>
             <div class="row">
               <div>Gender: </div>
@@ -72,7 +73,11 @@
             </div>
             <input type="button" id="reg_button" value="Register!" />
           </form>
-          <div id="reg_log"></div>
+          <div id="reg_log">
+            <p id="vusername" style="display:none;">Username not valid</p>
+            <p id="vemail" style="display:none;">Enter a valid email </p>
+            <p id="spass" style="display:none;">The two passwords are not the same</p>
+          </div>
         </article>
       </center>
     </section>

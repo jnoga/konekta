@@ -227,14 +227,6 @@ var konekta = {
     scroll_chat: function (jid_id) {
         scroll(jid_id);
     },
-
-    on_register: function(iq){
-        console.log('register: ');
-        console.log(iq);
-        $(iq).children('query').children().each(function () {
-            console($this);
-        });   
-    }
 };
 
 $(document).ready(function () {
@@ -249,22 +241,20 @@ $(document).ready(function () {
     });
 
     $("#reg_button").click(function(){
-        var callback = function(status) {
-            if (status === Strophe.Status.REGISTER){
-                connection.register.fields.username= "";
-                connection.register.fields.password = "";
-                connection.register.fields.email = "";
-                connection.register.submit();
-            } else if (status === Strophe.Status.REGISTERED) {
-                console.log("registered!");
-                connection.authenticate();
-            } else if (status === Strophe.Status.CONNECTED) {
-                console.log("logged in!");
-            } else {
-                console.log("...");
-            }
-        };
-        connection.register.connect
+        if(validateRegister()){
+            $(document).trigger('register', {
+                jid: $('#rjid').val(),
+                email: $('#email').val(),
+                name: $('#name').val(),
+                surname: $('#surname').val(),
+                gender: $('#gender').val(),
+                age: $('age').val(),
+                password: $('#rpassword').val()
+            });
+        }
+        else{
+            console.log("Error validating register");
+        }
     });
 
     $("#follow").click(function(){
@@ -292,15 +282,11 @@ $(window).unload(function() {
     $(document).trigger('disconnected');
 });
 
-
-
-
 $(document).bind('connect', function (ev, data) {
     console.log("trigger connect detected...");
-
     var conn = new Strophe.Connection(
         "http://localhost:7070/http-bind/");
-
+    
     conn.connect(data.jid, data.password, function (status) {
 
         if (status === Strophe.Status.CONNECTED) {
@@ -319,27 +305,36 @@ $(document).bind('connect', function (ev, data) {
     konekta.connection = conn;
 });
 
-$(document).bind('register', function(ev, data) {
+$(document).bind('register', function (ev, data) {
     console.log("trigger register detected...");
-
-    var connection = new Strophe.Connection(
-        "http://5.39.83.108:7070/http-bind/");
+    var conn = new Strophe.Connection(
+        "http://localhost:7070/http-bind/");
 
     var callback = function(status) {
         if (status === Strophe.Status.REGISTER){
-            connection.register.fields.username= "";
-            connection.register.fields.password = "";
-            connection.register.fields.email = "";
-            connection.register.submit();
+            conn.register.fields.username = data.jid;
+            conn.register.fields.email = data.email;
+            conn.register.fields.password = data.password;
+            conn.register.fields.name = data.name;
+            //conn.register.fields.surname = data.surname;
+            //conn.register.fields.age = data.age;
+            //conn.register.fields.gender = data.gender;
+            conn.register.submit();
         } else if (status === Strophe.Status.REGISTERED) {
             console.log("registered!");
-            connection.authenticate();
-        } else {
-            console.log("...");
+            $(document).trigger('connect', {
+                jid: data.jid+'@konekta',
+                password: data.password
+            });
+        } else if (status === Strophe.Status.CONNECTED) {
+            $(document).trigger('connected');
+        } else{
+            $('#vusername').attr('style','display:block; color: red;');
         }
     };
 
-    connection.register.connect("konekta", callback);
+    conn.register.connect("konekta", callback);
+    konekta.connection = conn;
 });
 
 $(document).bind('connected', function () {
@@ -373,11 +368,13 @@ $(document).bind('authfail', function () {
 $(document).bind('disconnected', function () {
     // remove dead connection object
     // konekta.connection.send($pres({"type":"unavailable"}));
-    konekta.connection.sync = true;
-    konekta.connection.flush();
-    konekta.connection.disconnect();
-    konekta.connection=null;
-    konekta.log("Connection terminated.");
+    if(konekta.connection){
+        konekta.connection.sync = true;
+        konekta.connection.flush();
+        konekta.connection.disconnect();
+        konekta.connection=null;
+        konekta.log("Connection terminated.");
+    }
 });
 
 $(document).bind('contact_added', function (ev,data) {
@@ -447,20 +444,65 @@ function unfollow(jid){
 }
 
 function changeToMainSection(){
-    $("#login-section").attr("style","display:none;");
+    $('section').each(function () {
+        $(this).attr("style","display:none;");
+    });
     $("#main-section").attr("style","display:block;");
 }
 
 function changeToRegSection(){
-    $("#login-section").attr("style","display:none;");
-    var iq = $iq({type:'get'}).c('query', {xmlns: 'jabber:iq:register'});
-    konekta.connection.sendIQ(iq, konekta.on_register);
+    $('section').each(function () {
+        $(this).attr("style","display:none;");
+    });
     $("#register-section").attr("style","display:block;");
 }
 
 function home(){
     $("#chat-area").attr('style', 'display: none;');
     $("#home").attr('style', 'display: block;');
+}
+
+function validateEmail(emailAddress){
+    var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
+    return pattern.test(emailAddress);
+}
+
+function validateRegister(){
+    var result = true;
+    if($('#rjid').val() == ''){
+        $('#rjid').attr('style', 'border: 1px solid red;');
+        result = false;
+    } 
+    if(!validateEmail($('#email').val())){
+        $('#email').attr('style', 'border: 1px solid red;');
+        $('#vemail').attr('style', 'display:block; color: red;');
+        result = false;
+    }
+    if($('#name').val() == ''){
+        $('#name').attr('style', 'border: 1px solid red;');
+        result = false;
+    }
+    if($('#rpassword').val() == ''){
+        $('#rpassword').attr('style', 'border: 1px solid red;');
+        result = false;
+    }
+    if($('#rrpassword').val() == ''){
+        $('#rrpassword').attr('style', 'border: 1px solid red;');
+        result = false;
+    }
+
+     if($('#rpassword').val() != $('#rrpassword').val()){
+        $('#spass').attr('style','display:block; color: red;');
+        result = false;
+     }
+
+     if(result){
+        $('#reg_log p').each(function () {
+            $(this).attr('style','display:none');
+        });
+     }
+
+     return result;
 }
 
 
