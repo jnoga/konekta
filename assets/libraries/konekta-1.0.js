@@ -167,7 +167,7 @@ var konekta = {
     on_message: function(message) {
         var jid = Strophe.getBareJidFromJid($(message).attr('from'));
         var date = new Date($(message).attr('stamp'));
-        
+
         var jid_id = konekta.jid_to_id(jid);
         console.log("message from: " + jid +"/" + jid_id);
         //Create new chat element if doesn't exists
@@ -340,6 +340,8 @@ $(document).bind('connected', function () {
     // inform the user
     konekta.log("Connection established.");
 
+    changeSection();
+
     var iq = $iq({type:'get'}).c('query', {xmlns: 'jabber:iq:roster'});
     konekta.connection.sendIQ(iq, konekta.on_roster);
     konekta.connection.addHandler(konekta.on_roster_changed, "jabber:iq:roster", "iq", "set");
@@ -349,7 +351,7 @@ $(document).bind('connected', function () {
     konekta.connection.receipts.addReceiptHandler(konekta.on_receipt, null, null, null);
 
 
-    changeSection();
+
 
 });
 
@@ -417,7 +419,7 @@ function sendMsg(jid_id, jid) {
             "type": "chat",
             "stamp": date,
         }).c('body').t(elem.val());
-        
+
         //konekta.connection.send(msg);
         if(!konekta.connection){
             konekta.connection.send($pres());
