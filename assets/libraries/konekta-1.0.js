@@ -285,7 +285,7 @@ $(window).unload(function() {
 $(document).bind('connect', function (ev, data) {
     console.log("trigger connect detected...");
     var conn = new Strophe.Connection(
-        "http://localhost:7070/http-bind/");
+        "http://5.39.83.108:7070/http-bind/");
     
     conn.connect(data.jid, data.password, function (status) {
 
@@ -308,7 +308,7 @@ $(document).bind('connect', function (ev, data) {
 $(document).bind('register', function (ev, data) {
     console.log("trigger register detected...");
     var conn = new Strophe.Connection(
-        "http://localhost:7070/http-bind/");
+        "http://5.39.83.108:7070/http-bind/");
 
     var callback = function(status) {
         if (status === Strophe.Status.REGISTER){
@@ -341,7 +341,7 @@ $(document).bind('connected', function () {
     // inform the user
     konekta.log("Connection established.");
 
-    changeSection();
+    changeToMainSection();
 
     var iq = $iq({type:'get'}).c('query', {xmlns: 'jabber:iq:roster'});
     konekta.connection.sendIQ(iq, konekta.on_roster);
@@ -350,8 +350,6 @@ $(document).bind('connected', function () {
     //Enable receiving messages
     konekta.connection.addHandler(konekta.on_message, null, 'message', null, null, null);
     konekta.connection.receipts.addReceiptHandler(konekta.on_receipt, null, null, null);
-
-    changeToMainSection();
 });
 
 $(document).bind('authenticating', function () {
