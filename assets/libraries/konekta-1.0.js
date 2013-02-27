@@ -296,7 +296,10 @@ $(document).bind('connect', function (ev, data) {
     conn.connect(data.jid, data.password, function (status) {
 
         if (status === Strophe.Status.CONNECTED) {
+            var user = $('#jid').val();
+            checkCookie(user);
             $(document).trigger('connected');
+
         } else if (status === Strophe.Status.AUTHENTICATING) {
             $(document).trigger('authenticating');
         } else if (status === Strophe.Status.CONNFAIL) {
@@ -466,4 +469,44 @@ function enter(myfield,e,a,b){
     }
     else
         return true;
+}
+
+function getCookie(c_name)
+{
+var i,x,y,ARRcookies=document.cookie.split(";");
+for (i=0;i<ARRcookies.length;i++)
+  {
+  x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+  y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+  x=x.replace(/^\s+|\s+$/g,"");
+  if (x==c_name)
+    {
+    return unescape(y);
+    }
+  }
+}
+
+function setCookie(c_name,value,exdays)
+{
+var exdate=new Date();
+exdate.setDate(exdate.getDate() + exdays);
+var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
+document.cookie=c_name + "=" + c_value;
+}
+
+function checkCookie(user)
+{
+var username=getCookie("username");
+if (username!=null && username!="")
+  {
+  cosole.log("Welcome again " + username);
+  }
+else
+  {
+
+  if (user!=null && user!="")
+    {
+    setCookie("username",user,365);
+    }
+  }
 }

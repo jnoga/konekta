@@ -153,7 +153,7 @@ section{
 .left .hora{position:absolute;right:-50px;color:white;font-size: 14px;font-style:italic;margin-top:11px;}
 
 .right{float:right;background: rgb(168,223,254);}
-.right .hora{position:absolute;left:-70px;color:white;font-size: 14px;font-style:italic;margin-top:7px;}
+.right .hora{position:absolute;left:-85px;color:white;font-size: 14px;font-style:italic;margin-top:7px;}
 
 .check{
 	font-size: 18px;
