@@ -238,6 +238,7 @@ $(document).ready(function () {
             jid: $('#jid').val()+'@konekta',
             password: $('#password').val()
         });
+
     });
 
     $("#reg_button").click(function(){
@@ -277,23 +278,20 @@ $(document).ready(function () {
 
 // });
 
-$(window).unload(function() {
-    console.log("cerrando sesión")
-    $(document).trigger('disconnected');
-});
+// $(window).unload(function() {
+//     console.log("cerrando sesión")
+//     $(document).trigger('disconnected');
+// });
 
 $(document).bind('connect', function (ev, data) {
     console.log("trigger connect detected...");
     var conn = new Strophe.Connection(
         "http://5.39.83.108:7070/http-bind/");
-    
+
     conn.connect(data.jid, data.password, function (status) {
 
         if (status === Strophe.Status.CONNECTED) {
-            var user = $('#jid').val();
-            checkCookie(user);
             $(document).trigger('connected');
-
         } else if (status === Strophe.Status.AUTHENTICATING) {
             $(document).trigger('authenticating');
         } else if (status === Strophe.Status.CONNFAIL) {
@@ -343,8 +341,15 @@ $(document).bind('register', function (ev, data) {
 $(document).bind('connected', function () {
     // inform the user
     konekta.log("Connection established.");
-
     changeToMainSection();
+
+    // var u = $('#jid').val();
+    // var p = $('#password').val();
+    // console.log("u"+u);
+    // console.log("p"+p);
+    // setCookie("username", u, 365);
+    // setCookie("password", p, 365);
+
 
     var iq = $iq({type:'get'}).c('query', {xmlns: 'jabber:iq:roster'});
     konekta.connection.sendIQ(iq, konekta.on_roster);
@@ -376,6 +381,13 @@ $(document).bind('disconnected', function () {
         konekta.connection.disconnect();
         konekta.connection=null;
         konekta.log("Connection terminated.");
+        var username=getCookie("username");
+        var contra=getCookie("password");
+            $(document).trigger('connect', {
+            jid: username,
+            password: contra
+    });
+  console.log(konekta.connection);
     }
 });
 
@@ -446,10 +458,12 @@ function unfollow(jid){
 }
 
 function changeToMainSection(){
+
     $('section').each(function () {
         $(this).attr("style","display:none;");
     });
     $("#main-section").attr("style","display:block;");
+
 }
 
 function changeToRegSection(){
@@ -474,7 +488,7 @@ function validateRegister(){
     if($('#rjid').val() == ''){
         $('#rjid').attr('style', 'border: 1px solid red;');
         result = false;
-    } 
+    }
     if(!validateEmail($('#email').val())){
         $('#email').attr('style', 'border: 1px solid red;');
         $('#vemail').attr('style', 'display:block; color: red;');
@@ -545,19 +559,23 @@ var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCStri
 document.cookie=c_name + "=" + c_value;
 }
 
-function checkCookie(user)
+function checkCookie()
 {
 var username=getCookie("username");
+var contra=getCookie("password");
 if (username!=null && username!="")
   {
-  cosole.log("Welcome again " + username);
+  console.log("Welcome again " + username + "pass: "+ contra );
+  console.log("volviendo a logear espera...");
+  console.log(konekta.connection);
+    $(document).trigger('connect', {
+            jid: username,
+            password: contra
+    });
+  console.log(konekta.connection);
   }
 else
   {
-
-  if (user!=null && user!="")
-    {
-    setCookie("username",user,365);
-    }
+    console.log("logeate");
   }
 }
