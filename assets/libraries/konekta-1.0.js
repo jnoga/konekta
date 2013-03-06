@@ -600,7 +600,7 @@ function parseDate(date){
         }
         else{
             result = date.getDate()+'/'+ 
-            (date.Month()<9?'0':'') + date.getMonth()+1 + '/' +
+            (date.getMonth()<9?'0':'') + (date.getMonth()+1) + '/' +
             date.getFullYear() + ' ' +
             date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
         }
