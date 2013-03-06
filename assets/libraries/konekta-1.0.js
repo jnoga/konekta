@@ -29,7 +29,7 @@ var konekta = {
             // transform jid into an id
             var jid_id = konekta.jid_to_id(jid);
             var contact = $("<li id='" + jid_id + "' >" +
-                        '<div class="roster-contact offline" onclick="openChat(\''+jid+'\');">' +
+                        '<div class="roster-contact offline" onclick="konekta.openChat(\''+jid+'\');">' +
                         '<div class="roster-name">' + name +
                         " <div id='um-"+jid_id+"'' style='display: inline-block;'></div>"+
                         '</div>' +
@@ -58,7 +58,7 @@ var konekta = {
                 var contact_html = "<li id='" + jid_id + "'>" +
                 "<div class='" +
                 ($('#' + jid_id).attr('class') || "roster-contact offline") +
-                "' onclick='openChat(\""+jid+"\");'>" +
+                "' onclick='konekta.openChat(\""+jid+"\");'>" +
                 "<div class='roster-name'>" + name + 
                 " <div id='um-"+jid_id+"'' style='display: inline-block;'></div>"+
                 '</div>' +
@@ -189,7 +189,7 @@ var konekta = {
             $('#chat-' + jid_id).append(
                 "<header><div onclick='home();' id='iconMenu'>&#8962;</div><h1>"+jid+" <div class='lastact' id='la-"+jid_id+"'></div></h1></header>" +
                 "<div class='msgs'></div>" +
-                "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'></footer>");
+                "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return konekta.enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'></footer>");
             $('#chat-' + jid_id).data('jid', jid);
         }
 
@@ -263,416 +263,81 @@ var konekta = {
         }
 
         return true;
+    },
+
+    openChat: function (jid){
+        var jid_id = konekta.jid_to_id(jid);
+        var name = $('#' + jid_id).find(".roster-name").text();
+        
+        //Open the user chat...
+        if ($('#chat-' + jid_id).length === 0) {
+            $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
+            $('#chat-' + jid_id).append(
+                "<header><div onclick='home();' id='iconMenu'>&#8962;</div><h1>"+jid+"  <div class='lastact' id='la-"+jid_id+"'></div></h1></header>" +
+                "<div class='msgs'></div>" +
+                "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return konekta.enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'></footer>");
+            $('#chat-' + jid_id).data('jid', jid);
+        }
+        //Show/focus on the users chat
+        $("#chat-area").attr('style', 'display: block;');
+        $(".chat").each(function( index ){
+            $(this).attr('style','display:none;');
+        });
+        $("#home").attr('style', 'display: none;');
+        $('#chat-'+ jid_id).attr('style','display:block;');
+        $('#chat-' + jid_id + ' input').focus();
+        $('#'+ jid_id).data('um', 0);
+        $('#um-'+ jid_id).text('');
+
+        var iq = $iq({type:'get', to: jid}).c('query', {xmlns: 'jabber:iq:last'});
+        konekta.connection.sendIQ(iq, konekta.contact_status);
+    },
+
+    sendMsg: function (jid_id, jid) {
+        //var elem = document.getElementById(id);
+        var elem = $("#i"+jid_id);
+
+        if(elem.val() !== ""){
+            var date = new Date();
+            var msg = $msg({
+                to: jid,
+                "type": "chat",
+                "stamp": date,
+            }).c('body').t(elem.val());
+
+            //konekta.connection.send(msg);
+            if(!konekta.connection){
+                konekta.connection.send($pres());
+            }
+            var mid = konekta.connection.receipts.sendMessage(msg);
+            var d_string = date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
+            if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('right')){
+                $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><div id='"+mid+"' class='hora'>"+d_string+"<span class='check'>&#10003;</span></div><p>"+elem.val()+"</p>");
+                $('#chat-' + jid_id).scrollTop($('#chat-' + jid_id + ' .msgs').height());
+            }
+            else{
+                $('#chat-' + jid_id + ' .msgs').append("<div class='msg right'><div id='"+mid+"' class='hora'>"+d_string+"<span class='check'>&#10003;</span></div><p>"+elem.val()+"</p></div>");
+                $('#chat-' + jid_id).scrollTop($('#chat-' + jid_id + ' .msgs').height());
+            }
+            elem.val('');
+        }
+    },
+
+    enter: function (myfield,e,a,b){
+        var keycode;
+        if (window.event) keycode = window.event.keyCode;
+        else if (e) keycode = e.which;
+        else return true;
+
+        if (keycode == 13){
+            konekta.sendMsg(a,b);
+            return false;
+        }
+        else
+            return true;
+    },
+
+    chat_history: function (iq){
+
     }
 };
-
-$(document).ready(function () {
-    $("#log_button").click(function(){
-        $('#jid').attr('disabled', 'disabled');
-        $('#password').attr('disabled', 'disabled');
-        $('#log_button').attr('disabled', 'disabled');
-        $(document).trigger('connect', {
-            jid: $('#jid').val()+'@konekta',
-            password: $('#password').val()
-        });
-
-    });
-
-    $("#reg_button").click(function(){
-        if(validateRegister()){
-            $(document).trigger('register', {
-                jid: $('#rjid').val(),
-                email: $('#email').val(),
-                name: $('#name').val(),
-                surname: $('#surname').val(),
-                gender: $('#gender').val(),
-                age: $('age').val(),
-                password: $('#rpassword').val()
-            });
-        }
-        else{
-            console.log("Error validating register");
-        }
-    });
-
-    $("#follow").click(function(){
-        console.log("follow trigger!");
-        $(document).trigger('contact_added', {
-            jid: $('#follow-jid').val(),
-        });
-    });
-});
-
-
-
-// window.onbeforeunload = function(){
-//     return " ";
-// };
-
-// $(window).on('beforeunload', function() {
-
-//     return "Are you shure?";
-
-// });
-
-// $(window).unload(function() {
-//     console.log("cerrando sesión")
-//     $(document).trigger('disconnected');
-// });
-
-$(document).bind('connect', function (ev, data) {
-    console.log("trigger connect detected...");
-    var conn = new Strophe.Connection(
-        "http://5.39.83.108:7070/http-bind/");
-
-    conn.connect(data.jid, data.password, function (status) {
-
-        if (status === Strophe.Status.CONNECTED) {
-            $(document).trigger('connected');
-        } else if (status === Strophe.Status.AUTHENTICATING) {
-            $(document).trigger('authenticating');
-        } else if (status === Strophe.Status.CONNFAIL) {
-            $(document).trigger('connfail');
-        } else if (status === Strophe.Status.AUTHFAIL) {
-            $(document).trigger('authfail');
-        } else if (status === Strophe.Status.DISCONNECTED) {
-            $(document).trigger('disconnected');
-        }
-    });
-
-    konekta.connection = conn;
-});
-
-$(document).bind('register', function (ev, data) {
-    console.log("trigger register detected...");
-    var conn = new Strophe.Connection(
-        "http://localhost:7070/http-bind/");
-
-    var callback = function(status) {
-        if (status === Strophe.Status.REGISTER){
-            conn.register.fields.username = data.jid;
-            conn.register.fields.email = data.email;
-            conn.register.fields.password = data.password;
-            conn.register.fields.name = data.name;
-            //conn.register.fields.surname = data.surname;
-            //conn.register.fields.age = data.age;
-            //conn.register.fields.gender = data.gender;
-            conn.register.submit();
-        } else if (status === Strophe.Status.REGISTERED) {
-            console.log("registered!");
-            $(document).trigger('connect', {
-                jid: data.jid+'@konekta',
-                password: data.password
-            });
-        } else if (status === Strophe.Status.CONNECTED) {
-            $(document).trigger('connected');
-        } else{
-            $('#vusername').attr('style','display:block; color: red;');
-        }
-    };
-
-    conn.register.connect("konekta", callback);
-    konekta.connection = conn;
-});
-
-$(document).bind('connected', function () {
-    // inform the user
-    konekta.log("Connection established.");
-    changeToMainSection();
-
-    // var u = $('#jid').val();
-    // var p = $('#password').val();
-    // console.log("u"+u);
-    // console.log("p"+p);
-    // setCookie("username", u, 365);
-    // setCookie("password", p, 365);
-
-
-    var iq = $iq({type:'get'}).c('query', {xmlns: 'jabber:iq:roster'});
-    konekta.connection.sendIQ(iq, konekta.on_roster);
-    konekta.connection.addHandler(konekta.on_roster_changed, "jabber:iq:roster", "iq", "set");
-
-    //Enable receiving messages
-    konekta.connection.addHandler(konekta.on_message, null, 'message', null, null, null);
-    konekta.connection.receipts.addReceiptHandler(konekta.on_receipt, null, null, null);
-});
-
-$(document).bind('authenticating', function () {
-    konekta.log("Attempting to authenticate and create session...");
-});
-
-$(document).bind('connfail', function () {
-    konekta.print("A problem has been encountered when trying to establish the connection");
-});
-
-$(document).bind('authfail', function () {
-    konekta.print("An error ocurred during the authentication process");
-});
-
-$(document).bind('disconnected', function () {
-    // remove dead connection object
-    // konekta.connection.send($pres({"type":"unavailable"}));
-    if(konekta.connection){
-        konekta.connection.sync = true;
-        konekta.connection.flush();
-        konekta.connection.disconnect();
-        konekta.connection=null;
-        konekta.log("Connection terminated.");
-        var username=getCookie("username");
-        var contra=getCookie("password");
-            $(document).trigger('connect', {
-            jid: username,
-            password: contra
-    });
-  console.log(konekta.connection);
-    }
-});
-
-$(document).bind('contact_added', function (ev,data) {
-    var iq = $iq({type: "set"}).c("query", {xmlns: "jabber:iq:roster"})
-        .c("item", data);
-    konekta.connection.sendIQ(iq);
-
-    var subscribe = $pres({to: data.jid, "type": "subscribe"});
-    konekta.connection.send(subscribe);
-});
-
-function openChat(jid){
-    var jid_id = konekta.jid_to_id(jid);
-    var name = $('#' + jid_id).find(".roster-name").text();
-    
-    //Open the user chat...
-    if ($('#chat-' + jid_id).length === 0) {
-        $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
-        $('#chat-' + jid_id).append(
-            "<header><div onclick='home();' id='iconMenu'>&#8962;</div><h1>"+jid+"  <div class='lastact' id='la-"+jid_id+"'></div></h1></header>" +
-            "<div class='msgs'></div>" +
-            "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'></footer>");
-        $('#chat-' + jid_id).data('jid', jid);
-    }
-    //Show/focus on the users chat
-    $("#chat-area").attr('style', 'display: block;');
-    $(".chat").each(function( index ){
-        $(this).attr('style','display:none;');
-    });
-    $("#home").attr('style', 'display: none;');
-    $('#chat-'+ jid_id).attr('style','display:block;');
-    $('#chat-' + jid_id + ' input').focus();
-    $('#'+ jid_id).data('um', 0);
-    $('#um-'+ jid_id).text('');
-
-    var iq = $iq({type:'get', to: jid}).c('query', {xmlns: 'jabber:iq:last'});
-    konekta.connection.sendIQ(iq, konekta.contact_status);
-}
-
-function sendMsg(jid_id, jid) {
-    //var elem = document.getElementById(id);
-    var elem = $("#i"+jid_id);
-
-    if(elem.val() !== ""){
-        var date = new Date();
-        var msg = $msg({
-            to: jid,
-            "type": "chat",
-            "stamp": date,
-        }).c('body').t(elem.val());
-
-        //konekta.connection.send(msg);
-        if(!konekta.connection){
-            konekta.connection.send($pres());
-        }
-        var mid = konekta.connection.receipts.sendMessage(msg);
-        var d_string = date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
-        if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('right')){
-            $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><div id='"+mid+"' class='hora'>"+d_string+"<span class='check'>&#10003;</span></div><p>"+elem.val()+"</p>");
-            $('#chat-' + jid_id).scrollTop($('#chat-' + jid_id + ' .msgs').height());
-        }
-        else{
-            $('#chat-' + jid_id + ' .msgs').append("<div class='msg right'><div id='"+mid+"' class='hora'>"+d_string+"<span class='check'>&#10003;</span></div><p>"+elem.val()+"</p></div>");
-            $('#chat-' + jid_id).scrollTop($('#chat-' + jid_id + ' .msgs').height());
-        }
-        elem.val('');
-    }
-}
-
-function unfollow(jid){
-    alert("You're going to unsubscribe "+jid);
-    //konekta.connection.send($pres({to: konekta.pending_subscriber, "type": "subscribed"}));
-}
-
-function changeToMainSection(){
-
-    $('section').each(function () {
-        $(this).attr("style","display:none;");
-    });
-    $("#main-section").attr("style","display:block;");
-
-}
-
-function changeToRegSection(){
-    $('section').each(function () {
-        $(this).attr("style","display:none;");
-    });
-    $("#register-section").attr("style","display:block;");
-}
-
-function home(){
-    $("#chat-area").attr('style', 'display: none;');
-    $('article').each(function () {
-        $(this).attr("style","display:none;");
-    });
-    $("#home").attr('style', 'display: block;');
-}
-
-function validateEmail(emailAddress){
-    var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
-    return pattern.test(emailAddress);
-}
-
-function validateRegister(){
-    var result = true;
-    if($('#rjid').val() == ''){
-        $('#rjid').attr('style', 'border: 1px solid red;');
-        result = false;
-    }
-    if(!validateEmail($('#email').val())){
-        $('#email').attr('style', 'border: 1px solid red;');
-        $('#vemail').attr('style', 'display:block; color: red;');
-        result = false;
-    }
-    if($('#name').val() == ''){
-        $('#name').attr('style', 'border: 1px solid red;');
-        result = false;
-    }
-    if($('#rpassword').val() == ''){
-        $('#rpassword').attr('style', 'border: 1px solid red;');
-        result = false;
-    }
-    if($('#rrpassword').val() == ''){
-        $('#rrpassword').attr('style', 'border: 1px solid red;');
-        result = false;
-    }
-
-     if($('#rpassword').val() != $('#rrpassword').val()){
-        $('#spass').attr('style','display:block; color: red;');
-        result = false;
-     }
-
-     if(result){
-        $('#reg_log p').each(function () {
-            $(this).attr('style','display:none');
-        });
-     }
-
-     return result;
-}
-
-
-function enter(myfield,e,a,b){
-    var keycode;
-    if (window.event) keycode = window.event.keyCode;
-    else if (e) keycode = e.which;
-    else return true;
-
-    if (keycode == 13){
-        sendMsg(a,b);
-        return false;
-    }
-    else
-        return true;
-}
-
-function parseDate(date){
-
-    var cur = new Date();
-    
-    var result = '';
-    if(date != null){
-        if(date.getDate() === cur.getDate() 
-            && date.getMonth() === cur.getMonth()
-            && date.getFullYear() === cur.getFullYear() ){
-            result = 'Today '+ date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
-        }
-        else if(date.getMonth() === cur.getMonth()
-            && date.getFullYear() === cur.getFullYear()
-            && date.getDate() === (cur.getDate()-1)){
-            result = 'Yesterday '+ date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();;
-        }
-        else{
-            result = date.getDate()+'/'+ 
-            (date.getMonth()<9?'0':'') + (date.getMonth()+1) + '/' +
-            date.getFullYear() + ' ' +
-            date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
-        }
-    } 
-
-    return result;
-}
-
-function parseSeconds(seconds){
-
-    var cur = new Date();
-    var result = '';
-
-    if(seconds != null){
-        var date = new Date(((cur.getTime() / 1000) - seconds) * 1000);
-        if(date.getDate() === cur.getDate() 
-            && date.getMonth() === cur.getMonth()
-            && date.getFullYear() === cur.getFullYear() ){
-            result = 'Today '+ date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
-        }
-        else if(date.getMonth() === cur.getMonth()
-            && date.getFullYear() === cur.getFullYear()
-            && date.getDate() === (cur.getDate()-1)){
-            result = 'Yesterday '+ date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();;
-        }
-        else{
-            result = date.getDate()+'/'+ 
-            (date.Month()<9?'0':'') + date.getMonth()+1 + '/' +
-            date.getFullYear() + ' ' +
-            date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
-        }
-    }
-
-    return result;
-}
-
-function getCookie(c_name) {
-    var i,x,y,ARRcookies=document.cookie.split(";");
-
-    for (i=0;i<ARRcookies.length;i++) {
-        x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
-        y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-        x=x.replace(/^\s+|\s+$/g,"");
-
-        if (x==c_name) {
-            return unescape(y);
-        }
-    }
-}
-
-function setCookie(c_name,value,exdays) {
-    var exdate=new Date();
-    exdate.setDate(exdate.getDate() + exdays);
-    var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
-    document.cookie=c_name + "=" + c_value;
-}
-
-function checkCookie() {
-    var username=getCookie("username");
-    var contra=getCookie("password");
-    if (username!=null && username!="") {
-        console.log("Welcome again " + username + "pass: "+ contra );
-        console.log("volviendo a logear espera...");
-        console.log(konekta.connection);
-        $(document).trigger('connect', {
-            jid: username,
-            password: contra
-        });
-
-        console.log(konekta.connection);
-    }
-    else {
-        console.log("logeate");
-    }
-}
