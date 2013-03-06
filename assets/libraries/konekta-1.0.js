@@ -30,11 +30,13 @@ var konekta = {
             var jid_id = konekta.jid_to_id(jid);
             var contact = $("<li id='" + jid_id + "' >" +
                         '<div class="roster-contact offline" onclick="openChat(\''+jid+'\');">' +
-                        //onclick="openChat(\''+jid+'\');"
-                        '<div class="roster-name">' + name + '</div>' +
+                        '<div class="roster-name">' + name +
+                        " <div id='um-"+jid_id+"'' style='display: inline-block;'></div>"+
+                        '</div>' +
                         //'<div class="roster-jid">' + jid + '</div></div>'+
                         //'<input type="button" value="Unfollow" class="unfollow" onclick="unfollow('+jid+');" />'+
                         '</li>');
+            contact.data('um', 0);
             konekta.insert_contact(contact);
         });
         konekta.connection.addHandler(konekta.on_presence, null, "presence");
@@ -56,18 +58,20 @@ var konekta = {
                 var contact_html = "<li id='" + jid_id + "'>" +
                 "<div class='" +
                 ($('#' + jid_id).attr('class') || "roster-contact offline") +
-                //onclick='openChat("+jid+");'
                 "' onclick='openChat(\""+jid+"\");'>" +
-                "<div class='roster-name'>" + name + '</div>' +
+                "<div class='roster-name'>" + name + 
+                " <div id='um-"+jid_id+"'' style='display: inline-block;'></div>"+
+                '</div>' +
                 //"<div class='roster-jid'" + jid +"</div>" +
                 "</div>"+
                 //"<input type='button' value='Unfollow' class='unfollow' onclick='unfollow("+jid+")'/>" +
                 "</li>";
-
                 if ($('#' + jid_id).length > 0) {
                     $('#' + jid_id).replaceWith(contact_html);
+                    $('#' + jid_id).data('um', ($('#' + jid_id).data('um') || 0));
                 } else {
                     console.log(contact_html);
+                    contact_html.data('um', 0);
                     konekta.insert_contact(contact_html);
                 }
             }
@@ -97,12 +101,21 @@ var konekta = {
 
             if (ptype === 'unavailable') {
                 contact.addClass('offline');
+                if($('#chat-' + konekta.jid_to_id(from)).length > 0){
+                        $('#la-' + konekta.jid_to_id(from)).text(parseDate(new Date()));
+                    }
             } else {
                 var show = $(presence).find('show').text();
                 if (show === '' || show === 'chat') {
                     contact.addClass('online');
+                    if($('#chat-' + konekta.jid_to_id(from)).length > 0){
+                        $('#la-' + konekta.jid_to_id(from)).text('Online');
+                    }
                 } else {
                     contact.addClass('away');
+                    if($('#chat-' + konekta.jid_to_id(from)).length > 0){
+                        $('#la-' + konekta.jid_to_id(from)).text('Away');
+                    }
                 }
             }
             var li = contact.parent();
@@ -174,19 +187,12 @@ var konekta = {
         if ($('#chat-' + jid_id).length === 0) {
             $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
             $('#chat-' + jid_id).append(
-                "<header><div onclick='home();' id='iconMenu'>&#8962;</div><h1>"+jid+"</h1></header>" +
+                "<header><div onclick='home();' id='iconMenu'>&#8962;</div><h1>"+jid+" <div class='lastact' id='la-"+jid_id+"'></div></h1></header>" +
                 "<div class='msgs'></div>" +
                 "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'></footer>");
             $('#chat-' + jid_id).data('jid', jid);
         }
-        //Show/focus on the users chat
-        $("#chat-area").attr('style', 'display: block;');
-        $(".chat").each(function( index ){
-            $(this).attr('style','display:none;');
-        });
-        $("#home").attr('style', 'display: none;');
-        $('#chat-'+ jid_id).attr('style','display:block;');
-        $('#chat-' + jid_id + ' input').focus();
+
         //Print the message
         var body = $(message).find("html > body");
         if (body.length === 0) {
@@ -221,12 +227,43 @@ var konekta = {
                 $('#chat-' + jid_id).scrollTop($('#chat-' + jid_id + ' .msgs').height());
             }
         }
+        
+        //show number of unread messages in roster
+        var um = $('#'+ jid_id).data('um');
+        if(!um) um = 0;
+        if($('#chat-'+ jid_id).attr('style') === 'display:block;'){
+            um = 0;
+        }
+        else{
+            um++;
+        }
+        $('#'+ jid_id).data('um', um);
+        $('#um-'+ jid_id).text((um === 0)?'':'('+um+')');
+
         return true;
     },
 
     scroll_chat: function (jid_id) {
         scroll(jid_id);
     },
+
+    contact_status: function (iq) {
+        console.log(iq)
+        var from = $(iq).attr('from');
+        var jid_id = konekta.jid_to_id(from);
+        var last = $($(iq).find('query')).attr('seconds');
+        var value = '';
+
+        if(last === '0'){
+            $('#la-' + jid_id).text('Online');
+        }
+        else{
+            value = parseSeconds(last);
+            $('#la-' + jid_id).text(value);
+        }
+
+        return true;
+    }
 };
 
 $(document).ready(function () {
@@ -285,7 +322,7 @@ $(window).unload(function() {
 $(document).bind('connect', function (ev, data) {
     console.log("trigger connect detected...");
     var conn = new Strophe.Connection(
-        "http://5.39.83.108:7070/http-bind/");
+        "http://localhost:7070/http-bind/");
     
     conn.connect(data.jid, data.password, function (status) {
 
@@ -308,7 +345,7 @@ $(document).bind('connect', function (ev, data) {
 $(document).bind('register', function (ev, data) {
     console.log("trigger register detected...");
     var conn = new Strophe.Connection(
-        "http://5.39.83.108:7070/http-bind/");
+        "http://localhost:7070/http-bind/");
 
     var callback = function(status) {
         if (status === Strophe.Status.REGISTER){
@@ -388,11 +425,12 @@ $(document).bind('contact_added', function (ev,data) {
 function openChat(jid){
     var jid_id = konekta.jid_to_id(jid);
     var name = $('#' + jid_id).find(".roster-name").text();
+    
     //Open the user chat...
     if ($('#chat-' + jid_id).length === 0) {
         $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
         $('#chat-' + jid_id).append(
-            "<header><div onclick='home();' id='iconMenu'>&#8962;</div><h1>"+jid+"</h1></header>" +
+            "<header><div onclick='home();' id='iconMenu'>&#8962;</div><h1>"+jid+"  <div class='lastact' id='la-"+jid_id+"'></div></h1></header>" +
             "<div class='msgs'></div>" +
             "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'></footer>");
         $('#chat-' + jid_id).data('jid', jid);
@@ -405,6 +443,11 @@ function openChat(jid){
     $("#home").attr('style', 'display: none;');
     $('#chat-'+ jid_id).attr('style','display:block;');
     $('#chat-' + jid_id + ' input').focus();
+    $('#'+ jid_id).data('um', 0);
+    $('#um-'+ jid_id).text('');
+
+    var iq = $iq({type:'get', to: jid}).c('query', {xmlns: 'jabber:iq:last'});
+    konekta.connection.sendIQ(iq, konekta.contact_status);
 }
 
 function sendMsg(jid_id, jid) {
@@ -458,6 +501,9 @@ function changeToRegSection(){
 
 function home(){
     $("#chat-area").attr('style', 'display: none;');
+    $('article').each(function () {
+        $(this).attr("style","display:none;");
+    });
     $("#home").attr('style', 'display: block;');
 }
 
@@ -517,4 +563,72 @@ function enter(myfield,e,a,b){
     }
     else
         return true;
+}
+
+function parseDate(date){
+
+    var cur = new Date();
+    
+    var result = '';
+    if(date != null){
+        if(date.getDate() === cur.getDate() 
+            && date.getMonth() === cur.getMonth()
+            && date.getFullYear() === cur.getFullYear() ){
+            result = 'Today '+ date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
+        }
+        else if(date.getMonth() === cur.getMonth()
+            && date.getFullYear() === cur.getFullYear()
+            && date.getDate() === (cur.getDate()-1)){
+            result = 'Yesterday '+ date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();;
+        }
+        else{
+            result = date.getDate()+'/'+ 
+            (date.Month()<9?'0':'') + date.getMonth()+1 + '/' +
+            date.getFullYear() + ' ' +
+            date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
+        }
+    } 
+
+    return result;
+}
+
+function parseSeconds(seconds){
+
+    var cur = new Date();
+    var result = '';
+
+    if(seconds != null){
+        var date = new Date(((cur.getTime() / 1000) - seconds) * 1000);
+        if(date.getDate() === cur.getDate() 
+            && date.getMonth() === cur.getMonth()
+            && date.getFullYear() === cur.getFullYear() ){
+            result = 'Today '+ date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
+        }
+        else if(date.getMonth() === cur.getMonth()
+            && date.getFullYear() === cur.getFullYear()
+            && date.getDate() === (cur.getDate()-1)){
+            result = 'Yesterday '+ date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();;
+        }
+        else{
+            result = date.getDate()+'/'+ 
+            (date.Month()<9?'0':'') + date.getMonth()+1 + '/' +
+            date.getFullYear() + ' ' +
+            date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
+        }
+    }
+
+    return result;
+}
+
+String.prototype.toHHMMSS = function () {
+    sec_numb    = parseInt(this);
+    var hours   = Math.floor(sec_numb / 3600);
+    var minutes = Math.floor((sec_numb - (hours * 3600)) / 60);
+    var seconds = sec_numb - (hours * 3600) - (minutes * 60);
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    var time    = hours+':'+minutes+':'+seconds;
+    return time;
 }
