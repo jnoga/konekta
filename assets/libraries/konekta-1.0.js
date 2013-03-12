@@ -1,4 +1,5 @@
 var konekta = {
+    BOSH_SERVICE: 'http://localhost:7070/http-bind/',
     connection: null,
     start_time: null,
     pending_subscriber: null,
@@ -10,6 +11,30 @@ var konekta = {
     log: function (msg) {
         //$('#log').append("<p>" + msg + "</p>");
         console.log(msg);
+    },
+
+    handleStropheStatus: function(status) {
+        if (status === Strophe.Status.CONNECTED) {
+            $(document).trigger('connected');
+        } else if (status === Strophe.Status.AUTHENTICATING) {
+            $(document).trigger('authenticating');
+        } else if (status === Strophe.Status.CONNFAIL) {
+            $(document).trigger('connfail');
+        } else if (status === Strophe.Status.AUTHFAIL) {
+            $(document).trigger('authfail');
+        } else if (status === Strophe.Status.DISCONNECTED) {
+            console.log('disconnected');
+            $(document).trigger('disconnected');
+        } else if (status === Strophe.Status.ATTACHED) {
+            console.log('session attached.');
+            $(document).trigger('connected');
+        } else if (status === Strophe.Status.DISCONNECTING){
+            console.log('status: DISCONNECTING');
+        } else if (status === Strophe.Status.ERROR){
+            console.log('status: ERROR');
+        }
+
+        return true;
     },
 
     on_receipt: function(msg){
@@ -31,15 +56,17 @@ var konekta = {
             var contact = $("<li id='" + jid_id + "' >" +
                         '<div class="roster-contact offline" onclick="konekta.openChat(\''+jid+'\');">' +
                         '<div class="roster-name">' + name +
-                        " <div id='um-"+jid_id+"'' style='display: inline-block;'></div>"+
+                        " <div id='um-"+jid_id+"' style='display: inline-block;'></div>"+
                         '</div>' +
                         //'<div class="roster-jid">' + jid + '</div></div>'+
-                        //'<input type="button" value="Unfollow" class="unfollow" onclick="unfollow('+jid+');" />'+
+                        '</div>'+
                         '</li>');
             contact.data('um', 0);
+            contact.data('jid', jid);
             konekta.insert_contact(contact);
         });
         konekta.connection.addHandler(konekta.on_presence, null, "presence");
+        konekta.load_chats();
         konekta.connection.send($pres());
     },
 
@@ -55,23 +82,23 @@ var konekta = {
             if (sub === 'remove') {
                 $('#' + jid_id).remove();
             } else {
-                var contact_html = "<li id='" + jid_id + "'>" +
-                "<div class='" +
-                ($('#' + jid_id).attr('class') || "roster-contact offline") +
+                var contact_html = $("<li id='" + jid_id + "'>" +
+                "<div class='" + ($('#' + jid_id).attr('class') || "roster-contact offline") +
                 "' onclick='konekta.openChat(\""+jid+"\");'>" +
                 "<div class='roster-name'>" + name + 
-                " <div id='um-"+jid_id+"'' style='display: inline-block;'></div>"+
+                " <div id='um-"+jid_id+"' style='display: inline-block;'></div>"+
                 '</div>' +
                 //"<div class='roster-jid'" + jid +"</div>" +
                 "</div>"+
-                //"<input type='button' value='Unfollow' class='unfollow' onclick='unfollow("+jid+")'/>" +
-                "</li>";
+                "</li>");
                 if ($('#' + jid_id).length > 0) {
                     $('#' + jid_id).replaceWith(contact_html);
                     $('#' + jid_id).data('um', ($('#' + jid_id).data('um') || 0));
+                    $('#' + jid_id).data('jid', jid);
                 } else {
                     console.log(contact_html);
                     contact_html.data('um', 0);
+                    contact_html.data('jid', jid);
                     konekta.insert_contact(contact_html);
                 }
             }
@@ -273,7 +300,7 @@ var konekta = {
         if ($('#chat-' + jid_id).length === 0) {
             $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
             $('#chat-' + jid_id).append(
-                "<header><div onclick='home();' id='iconMenu'>&#8962;</div><h1>"+jid+"  <div class='lastact' id='la-"+jid_id+"'></div></h1></header>" +
+                "<header><div onclick='home();' id='iconMenu'>&#8962;</div><h1>"+name+"  <div class='lastact' id='la-"+jid_id+"'></div></h1></header>" +
                 "<div class='msgs'></div>" +
                 "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return konekta.enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'></footer>");
             $('#chat-' + jid_id).data('jid', jid);
@@ -337,7 +364,12 @@ var konekta = {
             return true;
     },
 
-    chat_history: function (iq){
+    load_chats: function (){
+        $('div#roster-area li').each(function(){
+            var jid = $(this).data('jid');
+            console.log('ask for chat archive: ' + jid);
+        });
 
+        return true;
     }
 };

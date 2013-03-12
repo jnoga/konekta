@@ -1,4 +1,11 @@
 $(document).ready(function () {
+
+    var kcook = $.parseJSON(readCookie('konekta'));
+
+    if(kcook != null){
+        $(document).trigger('attach', kcook);
+    }
+
     $("#log_button").click(function(){
         $('#jid').attr('disabled', 'disabled');
         $('#password').attr('disabled', 'disabled');
@@ -7,7 +14,6 @@ $(document).ready(function () {
             jid: $('#jid').val()+'@konekta',
             password: $('#password').val()
         });
-
     });
 
     $("#reg_button").click(function(){
@@ -35,50 +41,42 @@ $(document).ready(function () {
     });
 });
 
-
-
-// window.onbeforeunload = function(){
-//     return " ";
-// };
-
-// $(window).on('beforeunload', function() {
-
-//     return "Are you shure?";
-
-// });
-
-// $(window).unload(function() {
-//     console.log("cerrando sesión")
-//     $(document).trigger('disconnected');
-// });
+$(window).bind('unload', function() {
+    
+    if(konekta.connection != null){
+        konekta.connection.pause();
+        var konn = {
+            jid : konekta.connection.jid,
+            sid : konekta.connection.sid,
+            rid : konekta.connection.rid,
+        }
+        createCookie('konekta', JSON.stringify(konn), 5);
+    } else {
+        eraseCookie('konekta');
+    }
+    //$(document).trigger('disconnected');
+});
 
 $(document).bind('connect', function (ev, data) {
     console.log("trigger connect detected...");
-    var conn = new Strophe.Connection(
-        "http://localhost:7070/http-bind/");
+    var conn = new Strophe.Connection(konekta.BOSH_SERVICE);
 
-    conn.connect(data.jid, data.password, function (status) {
-
-        if (status === Strophe.Status.CONNECTED) {
-            $(document).trigger('connected');
-        } else if (status === Strophe.Status.AUTHENTICATING) {
-            $(document).trigger('authenticating');
-        } else if (status === Strophe.Status.CONNFAIL) {
-            $(document).trigger('connfail');
-        } else if (status === Strophe.Status.AUTHFAIL) {
-            $(document).trigger('authfail');
-        } else if (status === Strophe.Status.DISCONNECTED) {
-            $(document).trigger('disconnected');
-        }
-    });
+    conn.connect(data.jid, data.password, konekta.handleStropheStatus);
 
     konekta.connection = conn;
 });
 
+
+$(document).bind('attach', function (ev, data) {
+    console.log("trigger attach detected... ");
+    konekta.connection = new Strophe.Connection(konekta.BOSH_SERVICE);
+    konekta.connection.attach(data.jid, data.sid, parseInt(data.rid,10), konekta.handleStropheStatus);
+});
+
+
 $(document).bind('register', function (ev, data) {
     console.log("trigger register detected...");
-    var conn = new Strophe.Connection(
-        "http://localhost:7070/http-bind/");
+    var conn = new Strophe.Connection(konekta.BOSH_SERVICE);
 
     var callback = function(status) {
         if (status === Strophe.Status.REGISTER){
@@ -109,17 +107,8 @@ $(document).bind('register', function (ev, data) {
 
 $(document).bind('connected', function () {
     // inform the user
-    konekta.log("Connection established.");
     changeToMainSection();
-
-    // var u = $('#jid').val();
-    // var p = $('#password').val();
-    // console.log("u"+u);
-    // console.log("p"+p);
-    // setCookie("username", u, 365);
-    // setCookie("password", p, 365);
-
-
+    
     var iq = $iq({type:'get'}).c('query', {xmlns: 'jabber:iq:roster'});
     konekta.connection.sendIQ(iq, konekta.on_roster);
     konekta.connection.addHandler(konekta.on_roster_changed, "jabber:iq:roster", "iq", "set");
@@ -143,20 +132,11 @@ $(document).bind('authfail', function () {
 
 $(document).bind('disconnected', function () {
     // remove dead connection object
-    // konekta.connection.send($pres({"type":"unavailable"}));
     if(konekta.connection){
         konekta.connection.sync = true;
         konekta.connection.flush();
         konekta.connection.disconnect();
         konekta.connection=null;
-        konekta.log("Connection terminated.");
-        var username=getCookie("username");
-        var contra=getCookie("password");
-        $(document).trigger('connect', {
-            jid: username,
-            password: contra
-        });
-        console.log(konekta.connection);
     }
 });
 
@@ -169,50 +149,31 @@ $(document).bind('contact_added', function (ev,data) {
     konekta.connection.send(subscribe);
 });
 
-
 function unfollow(jid){
     alert("You're going to unsubscribe "+jid);
     //konekta.connection.send($pres({to: konekta.pending_subscriber, "type": "subscribed"}));
 }
 
-
-
-function getCookie(c_name) {
-    var i,x,y,ARRcookies=document.cookie.split(";");
-
-    for (i=0;i<ARRcookies.length;i++) {
-        x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
-        y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-        x=x.replace(/^\s+|\s+$/g,"");
-
-        if (x==c_name) {
-            return unescape(y);
-        }
-    }
+function createCookie(name, value, days) {
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        var expires = "; expires=" + date.toGMTString();
+    } else var expires = "";
+    document.cookie = escape(name) + "=" + escape(value) + expires + "; path=/";
 }
 
-function setCookie(c_name,value,exdays) {
-    var exdate=new Date();
-    exdate.setDate(exdate.getDate() + exdays);
-    var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
-    document.cookie=c_name + "=" + c_value;
+function readCookie(name) {
+    var nameEQ = escape(name) + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return unescape(c.substring(nameEQ.length, c.length));
+    }
+    return null;
 }
 
-function checkCookie() {
-    var username=getCookie("username");
-    var contra=getCookie("password");
-    if (username!=null && username!="") {
-        console.log("Welcome again " + username + "pass: "+ contra );
-        console.log("volviendo a logear espera...");
-        console.log(konekta.connection);
-        $(document).trigger('connect', {
-            jid: username,
-            password: contra
-        });
-
-        console.log(konekta.connection);
-    }
-    else {
-        console.log("logeate");
-    }
+function eraseCookie(name) {
+    createCookie(name, "", -1);
 }
