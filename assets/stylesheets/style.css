@@ -108,13 +108,15 @@ section{
     box-shadow: 5px 5px 3px rgba(0, 0, 0, 0.3);
     color: black;
     display: block;
-    left: 36%;
+    left: 31%;
     position: absolute;
     top: 15%;
     width: 500px;
+    height: 465px;
 }
 
 #register div.row{
+	margin-top:10px;
 	width: 100%;
 	height: 40px;
 }
@@ -122,6 +124,7 @@ section{
 #register div.row div{
 	float: left;
 	width: 50%;
+	margin-left: 10px;
 }
 
 #register div.row input, select{
@@ -187,10 +190,10 @@ section{
 }
 
 .left{float:left;background: rgb(244,244,244);}
-.left .hora{position:absolute;right:-50px;color:white;font-size: 14px;font-style:italic;margin-top:11px;}
+.left .hora{position:absolute;right:-90px;color:white;font-size: 14px;font-style:italic;margin-top:11px;}
 
 .right{float:right;background: rgb(168,223,254);}
-.right .hora{position:absolute;left:-85px;color:white;font-size: 14px;font-style:italic;margin-top:7px;}
+.right .hora{position:absolute;left:-130px;color:white;font-size: 14px;font-style:italic;margin-top:7px;}
 
 .check{
 	font-size: 18px;
@@ -222,6 +225,24 @@ section{
 	border: 1px solid #062846;
 }
 
+#logout{
+	display: inline-block;
+	float: right;
+	color: white;
+	margin-left: 5px;
+	line-height: 35px;
+	font-size: 44px;
+	font-family: icons;
+	margin-left: 5px;
+	background-color: #0b416e;
+	width: 40px;
+	height: 35px;
+	margin-top: 2.4px;
+	border-radius: 5px;
+	vertical-align: top;
+	border: 1px solid #062846;
+}
+
 #iconSend{
 	margin-left: 2%;
 	color:white;
@@ -242,12 +263,11 @@ section{
 #log_button, #reg_button {
 	width: 100%;
 	font-size: 25px;
-	margin-top: 15px;
+	margin-top: 15px; 
 }
 
 #reg_button {
 	width: 65%;
-	margin: 0 auto !important; 
 }
 
 .button{

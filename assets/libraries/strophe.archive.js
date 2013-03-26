@@ -5,7 +5,8 @@ Strophe.addConnectionPlugin('archive', {
   init: function(connection) {
     this._connection = connection;
     Strophe.addNamespace('DELAY', 'jabber:x:delay');
-    Strophe.addNamespace('ARCHIVE', 'http://www.xmpp.org/extensions/xep-0136.html#ns');
+    //Strophe.addNamespace('ARCHIVE', 'http://www.xmpp.org/extensions/xep-0136.html#ns');
+    Strophe.addNamespace('ARCHIVE', 'urn:xmpp:archive')
   },
 
   listCollections: function(jid, rsm, callback) {
@@ -31,7 +32,7 @@ Strophe.ArchivedCollection = function(connection, jid, start) {
   this.connection = connection;
   this.jid = jid;
   this.start = start;
-  this.startDate = (new Date()).setISO8601(start);
+  if(start) {this.startDate = (new Date()).setISO8601(start)};
 };
 
 Strophe.ArchivedCollection.prototype = {

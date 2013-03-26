@@ -1,8 +1,8 @@
 $(document).ready(function () {
 
     var kcook = $.parseJSON(readCookie('konekta'));
-
-    if(kcook != null){
+    
+    if(kcook != null && kcook.jid != null){
         $(document).trigger('attach', kcook);
     }
 
@@ -29,12 +29,12 @@ $(document).ready(function () {
             });
         }
         else{
-            console.log("Error validating register");
+            konekta.log("Error validating register");
         }
     });
 
     $("#follow").click(function(){
-        console.log("follow trigger!");
+        konekta.log("follow trigger!");
         $(document).trigger('contact_added', {
             jid: $('#follow-jid').val(),
         });
@@ -58,7 +58,7 @@ $(window).bind('unload', function() {
 });
 
 $(document).bind('connect', function (ev, data) {
-    console.log("trigger connect detected...");
+    konekta.log("trigger connect detected...");
     var conn = new Strophe.Connection(konekta.BOSH_SERVICE);
 
     conn.connect(data.jid, data.password, konekta.handleStropheStatus);
@@ -68,47 +68,24 @@ $(document).bind('connect', function (ev, data) {
 
 
 $(document).bind('attach', function (ev, data) {
-    console.log("trigger attach detected... ");
+    konekta.log("trigger attach detected... ");
     konekta.connection = new Strophe.Connection(konekta.BOSH_SERVICE);
     konekta.connection.attach(data.jid, data.sid, parseInt(data.rid,10), konekta.handleStropheStatus);
 });
 
 
 $(document).bind('register', function (ev, data) {
-    console.log("trigger register detected...");
+    konekta.log("trigger register detected...");
     var conn = new Strophe.Connection(konekta.BOSH_SERVICE);
 
-    var callback = function(status) {
-        if (status === Strophe.Status.REGISTER){
-            conn.register.fields.username = data.jid;
-            conn.register.fields.email = data.email;
-            conn.register.fields.password = data.password;
-            conn.register.fields.name = data.name;
-            //conn.register.fields.surname = data.surname;
-            //conn.register.fields.age = data.age;
-            //conn.register.fields.gender = data.gender;
-            conn.register.submit();
-        } else if (status === Strophe.Status.REGISTERED) {
-            console.log("registered!");
-            $(document).trigger('connect', {
-                jid: data.jid+'@konekta',
-                password: data.password
-            });
-        } else if (status === Strophe.Status.CONNECTED) {
-            $(document).trigger('connected');
-        } else{
-            $('#vusername').attr('style','display:block; color: red;');
-        }
-    };
-
-    conn.register.connect("konekta", callback);
+    conn.register.connect("konekta", konekta.handleRegistration);
     konekta.connection = conn;
 });
 
 $(document).bind('connected', function () {
     // inform the user
     changeToMainSection();
-    
+
     var iq = $iq({type:'get'}).c('query', {xmlns: 'jabber:iq:roster'});
     konekta.connection.sendIQ(iq, konekta.on_roster);
     konekta.connection.addHandler(konekta.on_roster_changed, "jabber:iq:roster", "iq", "set");
@@ -132,6 +109,8 @@ $(document).bind('authfail', function () {
 
 $(document).bind('disconnected', function () {
     // remove dead connection object
+    $('#roster-area ul').empty();
+    $('#chat-area').empty();
     if(konekta.connection){
         konekta.connection.sync = true;
         konekta.connection.flush();
@@ -148,6 +127,21 @@ $(document).bind('contact_added', function (ev,data) {
     var subscribe = $pres({to: data.jid, "type": "subscribe"});
     konekta.connection.send(subscribe);
 });
+
+function logout(){
+    eraseCookie('konekta');
+    $('section').each(function () {
+        $(this).attr("style","display:none;");
+    });
+    $("#login-section").attr('style', 'display: block;');
+    $('#jid').val('');
+    $('#jid').removeAttr('disabled');
+    $('#password').val('');
+    $('#password').removeAttr('disabled');
+    $('#log_button').removeAttr('disabled');
+    $("#login").attr('style', 'display: block;');
+    $(document).trigger('disconnected');
+}
 
 function unfollow(jid){
     alert("You're going to unsubscribe "+jid);

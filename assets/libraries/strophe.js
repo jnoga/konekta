@@ -983,7 +983,8 @@ Strophe = {
     getDomainFromJid: function (jid)
     {
         var bare = Strophe.getBareJidFromJid(jid);
-        if (bare.indexOf("@") < 0) {
+        if(bare === null) return null;
+        else if (bare.indexOf("@") < 0) {
             return bare;
         } else {
             var parts = bare.split("@");

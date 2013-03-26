@@ -13,12 +13,12 @@
     <script type="text/javascript" src="assets/libraries/strophe.receipts.js"></script>
     <script type="text/javascript" src="assets/libraries/strophe.register.js"></script>
     <script type="text/javascript" src="assets/libraries/iso8601_support.js"></script>
+    <script type="text/javascript" src="assets/libraries/strophe.rsm.js"></script>
     <script type="text/javascript" src="assets/libraries/strophe.archive.js"></script>
-    <script type="text/javascript" src="assets/libraries/flXHR.js"></script>
-    <script type="text/javascript" src="assets/libraries/strophe.flxhr.min.js"></script>
     <script type="text/javascript" src="assets/libraries/konekta-effects-1.0.js"></script>
     <script type="text/javascript" src="assets/libraries/konekta-1.0.js"></script>
     <script type="text/javascript" src="assets/libraries/konekta-events-1.0.js"></script>
+    <title>Konekta</title>
   </head>
   <body>
 
@@ -43,7 +43,6 @@
       <header>
           <h1>Konekta - Register</h1>
       </header>
-      <center>
         <article id="register">
           <form class="registerBox">
             <div class="row">
@@ -75,7 +74,9 @@
             <div class="row">
               <div>Repeat Password*: </div><input type="password" id="rrpassword"/>
             </div>
-            <input type="button" id="reg_button" value="Register!" />
+            <center>
+              <input type="button" id="reg_button" value="Register!" />
+            </center>
           </form>
           <div id="reg_log">
             <p id="vusername" style="display:none;">Username not valid</p>
@@ -83,7 +84,6 @@
             <p id="spass" style="display:none;">The two passwords are not the same</p>
           </div>
         </article>
-      </center>
     </section>
 
     <section id="main-section">
@@ -91,6 +91,7 @@
         <article id="home">
           <header>
             <h1>Konekta</h1>
+            <div onclick='logout();' id='logout'>&#10006;</div>
           </header>
           <div id="roster-area">
             <ul></ul>

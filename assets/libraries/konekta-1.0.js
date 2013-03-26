@@ -1,5 +1,5 @@
 var konekta = {
-    BOSH_SERVICE: 'http://http://5.39.83.108:7070/http-bind/',
+    BOSH_SERVICE: 'http://10.92.12.182:7070/http-bind/',
     connection: null,
     start_time: null,
     pending_subscriber: null,
@@ -10,7 +10,9 @@ var konekta = {
 
     log: function (msg) {
         //$('#log').append("<p>" + msg + "</p>");
-        console.log(msg);
+        if( console && console.log ) {
+            console.log(msg);
+        }
     },
 
     handleStropheStatus: function(status) {
@@ -23,31 +25,53 @@ var konekta = {
         } else if (status === Strophe.Status.AUTHFAIL) {
             $(document).trigger('authfail');
         } else if (status === Strophe.Status.DISCONNECTED) {
-            console.log('disconnected');
+            konekta.log('disconnected');
             $(document).trigger('disconnected');
         } else if (status === Strophe.Status.ATTACHED) {
-            console.log('session attached.');
+            konekta.log('session attached.');
             $(document).trigger('connected');
         } else if (status === Strophe.Status.DISCONNECTING){
-            console.log('status: DISCONNECTING');
+            konekta.log('status: DISCONNECTING');
         } else if (status === Strophe.Status.ERROR){
-            console.log('status: ERROR');
+            konekta.log('status: ERROR');
         }
 
         return true;
     },
 
+    handleRegistration: function(status){
+        if (status === Strophe.Status.REGISTER){
+            conn.register.fields.username = data.jid;
+            conn.register.fields.email = data.email;
+            conn.register.fields.password = data.password;
+            conn.register.fields.name = data.name;
+            //conn.register.fields.surname = data.surname;
+            //conn.register.fields.age = data.age;
+            //conn.register.fields.gender = data.gender;
+            conn.register.submit();
+        } else if (status === Strophe.Status.REGISTERED) {
+            konekta.log("registered!");
+            $(document).trigger('connect', {
+                jid: data.jid+'@konekta',
+                password: data.password
+            });
+        } else if (status === Strophe.Status.CONNECTED) {
+            $(document).trigger('connected');
+        } else{
+            $('#vusername').attr('style','display:block; color: red;');
+        }
+    },
+
     on_receipt: function(msg){
-        console.log(msg);
-        var item = $(msg).find('received')
+        
+        var item = $(msg).find('received');
         var id = item.attr("id");
         $("#"+id+" .check").append("&#10003;");
         return true;
     },
 
     on_roster: function (iq) {
-        console.log('roster: ');
-        console.log(iq);
+        
         $(iq).find('item').each(function () {
             var jid = $(this).attr('jid');
             var name = $(this).attr('name') || jid;
@@ -66,13 +90,17 @@ var konekta = {
             konekta.insert_contact(contact);
         });
         konekta.connection.addHandler(konekta.on_presence, null, "presence");
-        konekta.load_chats();
+        $('div#roster-area li').each(function(){
+            var jid = $(this).data('jid');
+            var rsm =  new Strophe.RSM({max : 30});
+            konekta.connection.archive.listCollections(jid, rsm, konekta.collection_lists);
+        });
         konekta.connection.send($pres());
     },
 
     on_roster_changed: function(iq) {
-        console.log('roster changed: ');
-        console.log(iq);
+        konekta.log('roster changed: ');
+        konekta.log(iq);
         $(iq).find('item').each(function () {
             var sub = $(this).attr('subscription');
             var jid = $(this).attr('jid');
@@ -96,7 +124,7 @@ var konekta = {
                     $('#' + jid_id).data('um', ($('#' + jid_id).data('um') || 0));
                     $('#' + jid_id).data('jid', jid);
                 } else {
-                    console.log(contact_html);
+                    konekta.log(contact_html);
                     contact_html.data('um', 0);
                     contact_html.data('jid', jid);
                     konekta.insert_contact(contact_html);
@@ -112,10 +140,11 @@ var konekta = {
 
         var ptype = $(presence).attr('type');
         var from = $(presence).attr('from');
-        console.log(presence)
+
+        konekta.presence_session_control(from);
 
         if (ptype === 'subscribe') {
-            console.log("request from: " + from);
+            konekta.log("request from: " + from);
             konekta.pending_subscriber = from;
             //Automatically accept subscriptions
             konekta.connection.send($pres({to: konekta.pending_subscriber, "type": "subscribed"}));
@@ -158,6 +187,14 @@ var konekta = {
             .replace(".", "-");
     },
 
+    presence_session_control: function(from){
+        if(Strophe.getBareJidFromJid(from) 
+            === Strophe.getBareJidFromJid(konekta.connection.jid)) {
+            konekta.log(from+': presence');
+            konekta.connection.send($pres());
+        }
+    },
+
     presence_value: function (elem) {
         if (elem.hasClass('online')){
             return 2;
@@ -168,10 +205,10 @@ var konekta = {
     },
 
     insert_contact: function (elem) {
-        //console.log(elem.html());
+        //konekta.log(elem.html());
         var jid = elem.find('.roster-jid').text();
         var pres = konekta.presence_value(elem.find('.roster-contact'));
-        //console.log(jid+"/"+pres);
+        //konekta.log(jid+"/"+pres);
         var contacts = $('#roster-area li');
 
         if (contacts.length > 0) {
@@ -209,7 +246,7 @@ var konekta = {
         var date = new Date($(message).attr('stamp'));
 
         var jid_id = konekta.jid_to_id(jid);
-        console.log("message from: " + jid +"/" + jid_id);
+        var name = $('#' + jid_id).find(".roster-name").text();
         //Create new chat element if doesn't exists
         if ($('#chat-' + jid_id).length === 0) {
             $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
@@ -244,7 +281,7 @@ var konekta = {
         }
         if (body) {
             // add the new message
-            var d_string = date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
+            var d_string = parseDate(date);
             if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('left')){
                 $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><div class='hora'>"+d_string+"</div><p>"+body+"</p>");
                 $('#chat-' + jid_id).scrollTop($('#chat-' + jid_id + ' .msgs').height());
@@ -275,7 +312,7 @@ var konekta = {
     },
 
     contact_status: function (iq) {
-        console.log(iq)
+        
         var from = $(iq).attr('from');
         var jid_id = konekta.jid_to_id(from);
         var last = $($(iq).find('query')).attr('seconds');
@@ -337,7 +374,7 @@ var konekta = {
                 konekta.connection.send($pres());
             }
             var mid = konekta.connection.receipts.sendMessage(msg);
-            var d_string = date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
+            var d_string = parseDate(date);
             if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('right')){
                 $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><div id='"+mid+"' class='hora'>"+d_string+"<span class='check'>&#10003;</span></div><p>"+elem.val()+"</p>");
                 $('#chat-' + jid_id).scrollTop($('#chat-' + jid_id + ' .msgs').height());
@@ -364,11 +401,76 @@ var konekta = {
             return true;
     },
 
-    load_chats: function (){
-        $('div#roster-area li').each(function(){
-            var jid = $(this).data('jid');
-            console.log('ask for chat archive: ' + jid);
-        });
+    collection_lists: function (collection, responseRsm){
+        var count = responseRsm['count'];
+        if(count === null || Number(count) === 0){konekta.log('No collections to print: '+count);}
+        else{
+            konekta.log('Chat collcollections to print...' + count);
+            for (var i = 0; collection.length > i; i++) {
+                collection[i].retrieveMessages(null, function(messages, responseRsm){
+                    konekta.print_archive_messages(messages);
+                });
+            };
+        }
+        return true;
+    },
+
+    print_archive_messages: function(messages){
+        var c_jid = Strophe.getBareJidFromJid(konekta.connection.jid);
+        for(var i = 0; messages.length > i; i++) {
+            var msg = messages[i];
+            
+            var body = msg['body'];
+            var date = new Date(msg['timestamp']);
+            var jid = '';
+            var type = 0;
+
+            if (c_jid === msg['from']) {
+                jid = msg['to'];
+                type = 1;
+            }
+            else if (c_jid === msg['to']) {
+                jid = msg['from'];
+                type = 0;
+            }
+            else {
+                break;
+            }
+
+            var jid_id = konekta.jid_to_id(jid);
+            var name = $('#' + jid_id).find(".roster-name").text();
+            //Create new chat element if doesn't exists
+            if ($('#chat-' + jid_id).length === 0) {
+                $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
+                $('#chat-' + jid_id).append(
+                    "<header><div onclick='home();' id='iconMenu'>&#8962;</div><h1>"+name+" <div class='lastact' id='la-"+jid_id+"'></div></h1></header>" +
+                    "<div class='msgs'></div>" +
+                    "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return konekta.enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'></footer>");
+                $('#chat-' + jid_id).data('jid', jid);
+            }
+            
+            if (body) {
+                // add the new message
+                var d_string = parseDate(date);
+                if(!type){
+                    if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('left')){
+                        $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><div class='hora'>"+d_string+"</div><p>"+body+"</p>");
+                    }
+                    else{
+                        $('#chat-' + jid_id + ' .msgs').append("<div class='msg left'><div class='hora'>"+d_string+"</div><p>"+body+"</p></div>");
+                    }
+                }
+                else {
+                    if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('right')){
+                        $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><div class='hora'>"+d_string+"<span class='check'>&#10003;&#10003;</span></div><p>"+body+"</p>");
+                    }
+                    else{
+                        $('#chat-' + jid_id + ' .msgs').append("<div class='msg right'><div class='hora'>"+d_string+"<span class='check'>&#10003;&#10003;</span></div><p>"+body+"</p></div>");
+                    }
+                } 
+            }  
+
+        }
 
         return true;
     }

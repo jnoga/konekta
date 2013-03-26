@@ -14,6 +14,13 @@ function changeToRegSection(){
     $("#register-section").attr("style","display:block;");
 }
 
+function changeToLogSection(){
+    $('section').each(function () {
+        $(this).attr("style","display:none;");
+    });
+    $("#login-section").attr("style","display:block;");
+}
+
 function home(){
     $("#chat-area").attr('style', 'display: none;');
     $('article').each(function () {
@@ -74,7 +81,8 @@ function parseDate(date){
         if(date.getDate() === cur.getDate() 
             && date.getMonth() === cur.getMonth()
             && date.getFullYear() === cur.getFullYear() ){
-            result = 'Today '+ date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
+            result = ((cur.getHours() === date.getHours() &&
+                cur.getMinutes() > (date.getMinutes() + 5))?'Today ':'')+ date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
         }
         else if(date.getMonth() === cur.getMonth()
             && date.getFullYear() === cur.getFullYear()
