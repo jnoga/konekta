@@ -1,5 +1,5 @@
 var konekta = {
-    BOSH_SERVICE: 'http://10.92.12.182:7070/http-bind/',
+    BOSH_SERVICE: 'http://5.39.83.108:7070/http-bind/',
     connection: null,
     start_time: null,
     pending_subscriber: null,
@@ -448,7 +448,7 @@ var konekta = {
                     "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return konekta.enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'></footer>");
                 $('#chat-' + jid_id).data('jid', jid);
             }
-            
+
             if (body) {
                 // add the new message
                 var d_string = parseDate(date);
