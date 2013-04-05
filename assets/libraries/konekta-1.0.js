@@ -1,5 +1,5 @@
 var konekta = {
-    BOSH_SERVICE: 'http://localhost:7070/http-bind/',
+    BOSH_SERVICE: 'http://5.39.83.108:7070/http-bind/',
     connection: null,
     data: null,
     vcard: null,
