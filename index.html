@@ -15,6 +15,7 @@
     <script type="text/javascript" src="assets/libraries/iso8601_support.js"></script>
     <script type="text/javascript" src="assets/libraries/strophe.rsm.js"></script>
     <script type="text/javascript" src="assets/libraries/strophe.archive.js"></script>
+    <script type="text/javascript" src="assets/libraries/strophe.vcard.js"></script>
     <script type="text/javascript" src="assets/libraries/konekta-effects-1.0.js"></script>
     <script type="text/javascript" src="assets/libraries/konekta-1.0.js"></script>
     <script type="text/javascript" src="assets/libraries/konekta-events-1.0.js"></script>
@@ -25,6 +26,7 @@
     <section id="login-section">
       <header>
           <h1>Konekta</h1>
+          <div class='headIcon' id='iconReg'>&#59136;</div>
       </header>
       <center>
         <article id="login">
@@ -33,7 +35,6 @@
              <div>Password: </div><input type="password" id="password"/>
              <input type="button" id="log_button" value="Konekta!" />
           </form>
-          <a href="#" onclick="changeToRegSection();" id="reg_link">Register</a>
           <div id="login_log"></div>
         </article>
       </center>
@@ -41,9 +42,10 @@
 
     <section id="register-section">
       <header>
+          <div class='headIcon' id='iconBack'>&#59225;</div>
           <h1>Konekta - Register</h1>
       </header>
-        <article id="register">
+        <article id="register" class="register">
           <form class="registerBox">
             <div class="row">
               <div>Username (JID)*: </div><input type="text" id="rjid"/>
@@ -61,12 +63,12 @@
               <div>Gender: </div>
               <select id="gender">
                 <option value="">Select an Option</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
               </select>
             </div>
             <div class="row">
-              <div>Age: </div><input type="text" id="age" size="4"/>
+              <div>Age: </div><input type="date" id="age" size="4"/>
             </div>
             <div class="row">
               <div>Password*: </div><input type="password" id="rpassword"/>
@@ -90,8 +92,9 @@
       <center>
         <article id="home">
           <header>
+            <div class="headIcon" id='iconProfile'>&#59170;</div>
             <h1>Konekta</h1>
-            <div onclick='logout();' id='logout'>&#10006;</div>
+            <div class="headIcon" id='iconLogout'>&#10006;</div>
           </header>
           <div id="roster-area">
             <ul></ul>
@@ -99,7 +102,45 @@
         </article>
         <div id="chat-area"></div>
       </center>
+    </section>
 
+    <section id="profile-section">
+      <header>
+          <div class='headIcon' id='iconMenu'>&#8962;</div>
+          <h1>Konekta - Profile</h1>
+      </header>
+        <article id="profile" class="register">
+          <form class="registerBox">
+            <div class="row">
+              <div>Username (JID)*: </div><input type="text" disabled="disabled" id="pjid"/>
+            </div>
+            <div class="row">
+              <div>Email*: </div><input type="email" id="pemail"/>
+            </div>
+            <div class="row">
+              <div>Name*: </div><input type="text" id="pname"/>
+            </div>
+            <div class="row">
+              <div>Surname: </div><input type="text" id="psurname"/>
+            </div>
+            <div class="row">
+              <div>Gender: </div>
+              <select id="pgender">
+                <option value="">Select an Option</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+              </select>
+            </div>
+            <div class="row">
+              <div>Age: </div><input type="date" id="page" size="4"/>
+            </div>
+            <center>
+              <input type="button" id="prof_button" value="Update!" />
+            </center>
+          </form>
+          <div id="reg_log">
+          </div>
+        </article>
     </section>
 
   </body>

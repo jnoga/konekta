@@ -1,7 +1,8 @@
 var konekta = {
     BOSH_SERVICE: 'http://5.39.83.108:7070/http-bind/',
     connection: null,
-    start_time: null,
+    data: null,
+    vcard: null,
     pending_subscriber: null,
 
     print: function(msg){
@@ -40,20 +41,18 @@ var konekta = {
     },
 
     handleRegistration: function(status){
+
         if (status === Strophe.Status.REGISTER){
-            conn.register.fields.username = data.jid;
-            conn.register.fields.email = data.email;
-            conn.register.fields.password = data.password;
-            conn.register.fields.name = data.name;
-            //conn.register.fields.surname = data.surname;
-            //conn.register.fields.age = data.age;
-            //conn.register.fields.gender = data.gender;
-            conn.register.submit();
+            konekta.connection.register.fields.username = konekta.data.jid;
+            konekta.connection.register.fields.email = konekta.data.email;
+            konekta.connection.register.fields.password = konekta.data.password;
+            konekta.connection.register.fields.name = konekta.data.name;
+            konekta.connection.register.submit();
         } else if (status === Strophe.Status.REGISTERED) {
             konekta.log("registered!");
             $(document).trigger('connect', {
-                jid: data.jid+'@konekta',
-                password: data.password
+                jid: konekta.data.jid+'@konekta',
+                password: konekta.data.password
             });
         } else if (status === Strophe.Status.CONNECTED) {
             $(document).trigger('connected');
@@ -187,6 +186,10 @@ var konekta = {
             .replace(".", "-");
     },
 
+    jid_to_name: function (jid) {
+        return jid.substring(0, jid.indexOf('@'));
+    },
+
     presence_session_control: function(from){
         if(Strophe.getBareJidFromJid(from) 
             === Strophe.getBareJidFromJid(konekta.connection.jid)) {
@@ -251,7 +254,7 @@ var konekta = {
         if ($('#chat-' + jid_id).length === 0) {
             $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
             $('#chat-' + jid_id).append(
-                "<header><div onclick='home();' id='iconMenu'>&#8962;</div><h1>"+jid+" <div class='lastact' id='la-"+jid_id+"'></div></h1></header>" +
+                "<header><div onclick='home();' class='headIcon' id='iconMenu'>&#8962;</div><h1>"+jid+" <div class='lastact' id='la-"+jid_id+"'></div></h1></header>" +
                 "<div class='msgs'></div>" +
                 "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return konekta.enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'></footer>");
             $('#chat-' + jid_id).data('jid', jid);
@@ -337,7 +340,7 @@ var konekta = {
         if ($('#chat-' + jid_id).length === 0) {
             $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
             $('#chat-' + jid_id).append(
-                "<header><div onclick='home();' id='iconMenu'>&#8962;</div><h1>"+name+"  <div class='lastact' id='la-"+jid_id+"'></div></h1></header>" +
+                "<header><div onclick='home();' class='headIcon' id='iconMenu'>&#8962;</div><h1>"+name+"  <div class='lastact' id='la-"+jid_id+"'></div></h1></header>" +
                 "<div class='msgs'></div>" +
                 "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return konekta.enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'></footer>");
             $('#chat-' + jid_id).data('jid', jid);
@@ -403,9 +406,11 @@ var konekta = {
 
     collection_lists: function (collection, responseRsm){
         var count = responseRsm['count'];
-        if(count === null || Number(count) === 0){konekta.log('No collections to print: '+count);}
+        if(count === null || Number(count) === 0) {
+            //konekta.log('No collections to print: '+count);
+        }
         else{
-            konekta.log('Chat collcollections to print...' + count);
+           // konekta.log('Chat collcollections to print...' + count);
             for (var i = 0; collection.length > i; i++) {
                 collection[i].retrieveMessages(null, function(messages, responseRsm){
                     konekta.print_archive_messages(messages);
@@ -443,7 +448,7 @@ var konekta = {
             if ($('#chat-' + jid_id).length === 0) {
                 $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
                 $('#chat-' + jid_id).append(
-                    "<header><div onclick='home();' id='iconMenu'>&#8962;</div><h1>"+name+" <div class='lastact' id='la-"+jid_id+"'></div></h1></header>" +
+                    "<header><div onclick='home();' class='headIcon' id='iconMenu'>&#8962;</div><h1>"+name+" <div class='lastact' id='la-"+jid_id+"'></div></h1></header>" +
                     "<div class='msgs'></div>" +
                     "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return konekta.enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'></footer>");
                 $('#chat-' + jid_id).data('jid', jid);
@@ -462,15 +467,62 @@ var konekta = {
                 }
                 else {
                     if($('#chat-' + jid_id + ' .msgs div:last-child').hasClass('right')){
-                        $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><div class='hora'>"+d_string+"<span class='check'>&#10003;&#10003;</span></div><p>"+body+"</p>");
+                        $('#chat-' + jid_id + ' .msgs div:last-child').append("<hr/><div class='hora'>"+d_string+"<!--<span class='check'>&#10003;&#10003;</span>--></div><p>"+body+"</p>");
                     }
                     else{
-                        $('#chat-' + jid_id + ' .msgs').append("<div class='msg right'><div class='hora'>"+d_string+"<span class='check'>&#10003;&#10003;</span></div><p>"+body+"</p></div>");
+                        $('#chat-' + jid_id + ' .msgs').append("<div class='msg right'><div class='hora'>"+d_string+"<!--<span class='check'>&#10003;&#10003;</span>--></div><p>"+body+"</p></div>");
                     }
                 } 
             }  
 
         }
+
+        return true;
+    },
+
+    create_vcard: function() {
+
+          if (konekta.data) {
+            try{
+                var xml = $build('vCard', {xmlns: Strophe.NS.VCARD});
+                xml = xml.c('JABBERID').t(konekta.data.jid).up();
+                xml = xml.c('FN').t(konekta.data.name + ' ' +konekta.data.surname).up();
+                xml = xml.c('GENDER').t(konekta.data.gender).up();
+                xml = xml.c('DEVICEID').t("xXXXXx-x").up();
+                var n = $build('N');
+                n = n.c('FAMILY').t(konekta.data.surname).up();
+                n = n.c('GIVEN').t(konekta.data.name).up();
+                n = n.tree();
+                xml = xml.cnode(n).up();
+                xml = xml.c('NICKNAME').t(konekta.data.jid).up();
+                xml = xml.c('BDAY').t(konekta.data.age).up();
+                var e = $build('EMAIL');
+                e = e.c('INTERNET').up();
+                e = e.c('USERID').t(konekta.data.email).up();
+                e = e.tree();
+                xml = xml.cnode(e).up();
+
+                konekta.vcard = xml.tree();
+            }
+            catch(err){
+                konekta.log(err);
+            }
+          }
+    },
+
+    vcard_handler: function(iq) {
+        console.log(iq);
+        var vc = $(iq).find('vCard');
+        if(vc) {
+            konekta.vcard = vc;
+        }
+
+        return true;
+    },
+
+    vcard_error_handler: function(iq) {
+        konekta.log('vcard error: ');
+        konekta.log(iq);
 
         return true;
     }

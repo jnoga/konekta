@@ -24,12 +24,28 @@ $(document).ready(function () {
                 name: $('#name').val(),
                 surname: $('#surname').val(),
                 gender: $('#gender').val(),
-                age: $('age').val(),
+                age: $('#age').val(),
                 password: $('#rpassword').val()
             });
         }
         else{
             konekta.log("Error validating register");
+        }
+    });
+
+    $("#prof_button").click(function(){
+        if(validateProfile()){
+            $(document).trigger('profile_update', {
+                jid: $('#pjid').val() + "@konekta",
+                email: $('#pemail').val(),
+                name: $('#pname').val(),
+                surname: $('#psurname').val(),
+                gender: $('#pgender').val(),
+                age: $('#page').val(),
+            });
+        }
+        else{
+            konekta.log("Error validating profile");
         }
     });
 
@@ -39,11 +55,44 @@ $(document).ready(function () {
             jid: $('#follow-jid').val(),
         });
     });
+
+    $("#iconReg").click(function(){
+        changeToRegSection();
+    });
+
+    $("#iconBack").click(function(){
+        changeToLogSection();
+    });
+
+    $("#iconProfile").click(function(){
+        var vcard = konekta.vcard.toArray();
+        if(vcard && vcard.length > 0) {
+            $('#pjid').val($(vcard).find('JABBERID').text());
+            $('#pname').val($(vcard).find('GIVEN').text());
+            $('#psurname').val($(vcard).find('FAMILY').text());
+            $('#pemail').val($(vcard).find('USERID').text());
+            $('#pgender').val($(vcard).find('GENDER').text());
+            $('#page').val($(vcard).find('BDAY').text());
+        }
+        else {
+            $('#pjid').val(konekta.jid_to_name(konekta.connection.jid));
+            $('#pname').val(konekta.connection.name);
+        }
+        changeToProfSection();
+    });
+
+    $("#iconLogout").click(function(){
+        logout();
+    });
+
+    $("#iconMenu").click(function(){
+        changeToMainSection();
+    });
 });
 
 $(window).bind('unload', function() {
     
-    if(konekta.connection != null){
+    if(konekta && konekta.connection != null){
         konekta.connection.pause();
         var konn = {
             jid : konekta.connection.jid,
@@ -77,7 +126,7 @@ $(document).bind('attach', function (ev, data) {
 $(document).bind('register', function (ev, data) {
     konekta.log("trigger register detected...");
     var conn = new Strophe.Connection(konekta.BOSH_SERVICE);
-
+    konekta.data = data;
     conn.register.connect("konekta", konekta.handleRegistration);
     konekta.connection = conn;
 });
@@ -89,10 +138,28 @@ $(document).bind('connected', function () {
     var iq = $iq({type:'get'}).c('query', {xmlns: 'jabber:iq:roster'});
     konekta.connection.sendIQ(iq, konekta.on_roster);
     konekta.connection.addHandler(konekta.on_roster_changed, "jabber:iq:roster", "iq", "set");
-
+    //Get vCard
+    if(konekta.data != null) {
+        konekta.create_vcard();
+        konekta.connection.vcard.set(konekta.vcard_handler, konekta.vcard, null, konekta.vcard_error_handler);
+    }
+    else{
+        konekta.connection.vcard.get(konekta.vcard_handler, null, konekta.vcard_error_handler);
+    }
     //Enable receiving messages
     konekta.connection.addHandler(konekta.on_message, null, 'message', null, null, null);
     konekta.connection.receipts.addReceiptHandler(konekta.on_receipt, null, null, null);
+});
+
+$(document).bind('profile_update', function (ev, data) {
+    konekta.data = data;
+    if(konekta.data != null) {
+        konekta.create_vcard();
+        konekta.connection.vcard.set(konekta.vcard_handler, konekta.vcard, null, konekta.vcard_error_handler);
+    }
+    else {
+        console.log('Error updating profile');
+    }
 });
 
 $(document).bind('authenticating', function () {

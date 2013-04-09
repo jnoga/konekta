@@ -3,6 +3,7 @@ function changeToMainSection(){
     $('section').each(function () {
         $(this).attr("style","display:none;");
     });
+    $("#home").attr("style","display:block;");
     $("#main-section").attr("style","display:block;");
 
 }
@@ -12,6 +13,14 @@ function changeToRegSection(){
         $(this).attr("style","display:none;");
     });
     $("#register-section").attr("style","display:block;");
+}
+
+function changeToProfSection() {
+    $('section').each(function () {
+        $(this).attr("style","display:none;");
+    });
+    $("#profile").attr("style","display:block;");
+    $("#profile-section").attr('style', 'display: block;');
 }
 
 function changeToLogSection(){
@@ -70,6 +79,29 @@ function validateRegister(){
      }
 
      return result;
+}
+
+function validateProfile() {
+    var result = true;
+    if($('#pjid').val() == ''){
+        $('#pjid').attr('style', 'border: 1px solid red;');
+        result = false;
+    }
+    if(!validateEmail($('#pemail').val())){
+        $('#pemail').attr('style', 'border: 1px solid red;');
+        result = false;
+    }
+    if($('#pname').val() == ''){
+        $('#pname').attr('style', 'border: 1px solid red;');
+        result = false;
+    }
+    if(result){
+        $('#prof_log p').each(function () {
+            $(this).attr('style','display:none');
+        });
+    }
+    
+    return result;    
 }
 
 function parseDate(date){
