@@ -36,7 +36,7 @@ $(document).ready(function () {
     $("#prof_button").click(function(){
         if(validateProfile()){
             $(document).trigger('profile_update', {
-                jid: $('#pjid').val(),
+                jid: $('#pjid').val() + "@konekta",
                 email: $('#pemail').val(),
                 name: $('#pname').val(),
                 surname: $('#psurname').val(),
@@ -65,14 +65,14 @@ $(document).ready(function () {
     });
 
     $("#iconProfile").click(function(){
-        if(konekta.vcard && konekta.vcard.length > 1) {
-            console.log('hay datos...' + konekta.vcard.length);
-            $('#pjid').val($(konekta.vcard).find('jabberid').text());
-            $('#pname').val($(konekta.vcard).find('given').text());
-            $('#psurname').val($(konekta.vcard).find('family').text());
-            $('#pemail').val($(konekta.vcard).find('userid').text());
-            $('#pgender').val($(konekta.vcard).find('gender').text());
-            $('#page').val($(konekta.vcard).find('bday').text());
+        var vcard = konekta.vcard.toArray();
+        if(vcard && vcard.length > 0) {
+            $('#pjid').val($(vcard).find('JABBERID').text());
+            $('#pname').val($(vcard).find('GIVEN').text());
+            $('#psurname').val($(vcard).find('FAMILY').text());
+            $('#pemail').val($(vcard).find('USERID').text());
+            $('#pgender').val($(vcard).find('GENDER').text());
+            $('#page').val($(vcard).find('BDAY').text());
         }
         else {
             $('#pjid').val(konekta.jid_to_name(konekta.connection.jid));

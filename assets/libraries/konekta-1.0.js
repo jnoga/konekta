@@ -406,9 +406,11 @@ var konekta = {
 
     collection_lists: function (collection, responseRsm){
         var count = responseRsm['count'];
-        if(count === null || Number(count) === 0){konekta.log('No collections to print: '+count);}
+        if(count === null || Number(count) === 0) {
+            //konekta.log('No collections to print: '+count);
+        }
         else{
-            konekta.log('Chat collcollections to print...' + count);
+           // konekta.log('Chat collcollections to print...' + count);
             for (var i = 0; collection.length > i; i++) {
                 collection[i].retrieveMessages(null, function(messages, responseRsm){
                     konekta.print_archive_messages(messages);
@@ -479,34 +481,33 @@ var konekta = {
     },
 
     create_vcard: function() {
-        if (konekta.data != null){
-            //create new vCard
-             var vc = '<vCard xmlns="vcard-temp">'+
-                    '<N>'+
-                        '<FAMILY>'+konekta.data.surname+'</FAMILY>' +
-                        '<GIVEN>'+konekta.data.name+'</GIVEN>' +
-                    '</N>'+
-                    '<NICKNAME>'+konekta.data.jid+'</NICKNAME>' +
-                    '<BDAY>'+konekta.data.age+'</BDAY>' +
-                    '<EMAIL>' +
-                        '<INTERNET/>' +
-                        '<USERID>'+konekta.data.email+'</USERID>' +
-                    '</EMAIL>' +
-                    '<JABBERID>'+konekta.data.jid+'@konekta</JABBERID>' +
-                    '<FN>'+konekta.data.name + ' ' +konekta.data.surname+'</FN>' +
-                    '<GENDER>'+konekta.data.gender+'</GENDER>' +
-                    '</vCard>';
 
-            vc = $.parseXML(vc);
-            console.log(vc);
-            konekta.vcard = vc;
-        }
-        else{
-            konekta.log('No new data to create vCard:');
-            konekta.log('vcard: '+konekta.vcard);
-        }
+          if (konekta.data) {
+            try{
+                var xml = $build('vCard', {xmlns: Strophe.NS.VCARD});
+                xml = xml.c('JABBERID').t(konekta.data.jid).up();
+                xml = xml.c('FN').t(konekta.data.name + ' ' +konekta.data.surname).up();
+                xml = xml.c('GENDER').t(konekta.data.gender).up();
+                xml = xml.c('DEVICEID').t("xXXXXx-x").up();
+                var n = $build('N');
+                n = n.c('FAMILY').t(konekta.data.surname).up();
+                n = n.c('GIVEN').t(konekta.data.name).up();
+                n = n.tree();
+                xml = xml.cnode(n).up();
+                xml = xml.c('NICKNAME').t(konekta.data.jid).up();
+                xml = xml.c('BDAY').t(konekta.data.age).up();
+                var e = $build('EMAIL');
+                e = e.c('INTERNET').up();
+                e = e.c('USERID').t(konekta.data.email).up();
+                e = e.tree();
+                xml = xml.cnode(e).up();
 
-        return true;
+                konekta.vcard = xml.tree();
+            }
+            catch(err){
+                konekta.log(err);
+            }
+          }
     },
 
     vcard_handler: function(iq) {

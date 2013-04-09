@@ -21,13 +21,13 @@ Strophe.addConnectionPlugin('vcard', {
 
   set: function(handler_cb, vCardEl, jid, error_cb) {
     var iq = new Strophe.vCardIQ("set", jid, vCardEl);
-    console.log(iq);
     return this._connection.sendIQ(iq, handler_cb, error_cb);
   }
 });
 
 Strophe.vCardIQ = function(type, jid, vCardEl) {
-  var iq = $iq(jid ? {type: type, from: jid} : {type: type}).c("vCard", {xmlns: Strophe.NS.VCARD});
+  var iq = $iq(jid ? {type: type, to: jid} : {type: type});
+  if(type === "get"){iq = iq.c("vCard", {xmlns: Strophe.NS.VCARD});}
   if (vCardEl) { iq.cnode(vCardEl); }
   return iq;
 };
