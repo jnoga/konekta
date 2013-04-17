@@ -98,8 +98,8 @@ var konekta = {
     },
 
     on_roster_changed: function(iq) {
-        konekta.log('roster changed: ');
-        konekta.log(iq);
+        //konekta.log('roster changed: ');
+        //konekta.log(iq);
         $(iq).find('item').each(function () {
             var sub = $(this).attr('subscription');
             var jid = $(this).attr('jid');
@@ -525,5 +525,9 @@ var konekta = {
         konekta.log(iq);
 
         return true;
+    },
+
+    roster_delimiter: function(iq) {
+        console.log(iq);
     }
 };
