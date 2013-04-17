@@ -67,8 +67,11 @@ $(document).ready(function () {
     $("#iconProfile").click(function(){
         var vcard = konekta.vcard.toArray();
         if(vcard && vcard.length > 0) {
-            $('#pjid').val($(vcard).find('JABBERID').text());
-            $('#pname').val($(vcard).find('GIVEN').text());
+            var jid = Strophe.getBareJidFromJid(konekta.connection.jid);
+            var name = $(vcard).find('GIVEN').text();
+            if (!name || name === '') name = konekta.connection.name;
+            $('#pjid').val(jid);
+            $('#pname').val(name);
             $('#psurname').val($(vcard).find('FAMILY').text());
             $('#pemail').val($(vcard).find('USERID').text());
             $('#pgender').val($(vcard).find('GENDER').text());
@@ -141,11 +144,16 @@ $(document).bind('connected', function () {
     //Get vCard
     if(konekta.data != null) {
         konekta.create_vcard();
+        konekta.data = null;
         konekta.connection.vcard.set(konekta.vcard_handler, konekta.vcard, null, konekta.vcard_error_handler);
     }
     else{
         konekta.connection.vcard.get(konekta.vcard_handler, null, konekta.vcard_error_handler);
     }
+    iq = $iq({type: 'get'}).c('query', {xmlns: 'jabber:iq:private'});
+    iq = iq.cnode($build('roster', {xmlns: 'roster:delimiter'}).tree());
+    konekta.connection.sendIQ(iq, konekta.roster_delimiter);
+
     //Enable receiving messages
     konekta.connection.addHandler(konekta.on_message, null, 'message', null, null, null);
     konekta.connection.receipts.addReceiptHandler(konekta.on_receipt, null, null, null);
