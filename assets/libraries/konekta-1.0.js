@@ -6,7 +6,7 @@ var konekta = {
     pending_subscriber: null,
 
     print: function(msg){
-    	$('#loging_log').append("<p>" + msg + "</p>");
+    	$('#login_log').append("<p>" + msg + "</p>");
     },
 
     log: function (msg) {
