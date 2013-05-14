@@ -31,11 +31,18 @@ function changeToLogSection(){
 }
 
 function home(){
-    $("#chat-area").attr('style', 'display: none;');
+    //$("#roster-area").attr('style', 'display: none;');
     $('article').each(function () {
         $(this).attr("style","display:none;");
     });
+    $("#chat-area-list").attr('style', 'display: block;');
     $("#home").attr('style', 'display: block;');
+}
+
+function message(){
+    $("#chat-area-list").attr('style', 'display: none;');
+    $("#roster-area").attr('style', 'display: block;');
+    $("#home").attr('style', 'display: none;');
 }
 
 function validateEmail(emailAddress){
@@ -104,6 +111,20 @@ function validateProfile() {
     return result;    
 }
 
+function compareDate(date1, date2){
+    var result = 0;
+    if(date1 && date1!='' && date2 && date2!=''){
+        if(date1.getDate() === date2.getDate() 
+            && date1.getMonth() === date2.getMonth()
+            && date1.getFullYear() === date2.getFullYear() ){
+            result = 1;
+        }
+        else 
+            result = 0;
+    } 
+    return result;
+}
+
 function parseDate(date){
 
     var cur = new Date();
@@ -129,6 +150,24 @@ function parseDate(date){
         }
     } 
 
+    return result;
+}
+
+function parseOnlyDay(date){
+    var result = '';
+    if(date != null){
+        result = date.getDate()+'/'+ 
+        (date.getMonth()<9?'0':'') + (date.getMonth()+1) + '/' +
+        date.getFullYear();
+    }
+    return result;
+}
+
+function parseOnlyHour(date){
+    var result = '';
+    if(date != null){
+        result = date.getHours()+":"+(date.getMinutes()<10?'0':'') + date.getMinutes();
+    }
     return result;
 }
 

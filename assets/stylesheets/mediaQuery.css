@@ -1,0 +1,52 @@
+
+@media only screen and (max-width : 1920px),
+only screen and (max-device-width : 1920px){
+  .msg{width: 68%;}
+}
+
+@media only screen and (max-width : 1050px),
+only screen and (max-device-width : 1050px){
+  body{overflow-y: scroll;}
+  .register{
+    left: auto;
+    margin: 43px auto 20px;
+    position: relative;
+    top:auto;
+    width: 80%;
+  }
+}
+
+@media only screen and (max-width : 660px),
+only screen and (max-device-width : 660px){
+  body{overflow-y: scroll;}
+  header h1{font-size: 22px;}
+  .left .hora{
+    color: black;
+    font-size: 14px;
+    font-style: italic;
+    margin-bottom: 5px;
+    position: relative;
+    right: auto;
+    text-align: left;
+    width: auto;
+  }
+  .right .hora {
+    color: black;
+    font-size: 14px;
+    font-style: italic;
+    left: auto;
+    margin-bottom: 5px;
+    margin-top: auto;
+    position: relative;
+    text-align: right;
+    width: auto;
+  }
+  .register{
+    left: auto;
+    margin-top: 43px;
+    position: relative;
+    top:auto;
+    width: auto;
+    margin-bottom: 20px;
+  }
+}

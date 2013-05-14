@@ -7,8 +7,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="format-detection" content="telephone=no">
     <link rel="stylesheet" type="text/css" href="assets/stylesheets/style.css">
+    <link rel="stylesheet" type="text/css" href="assets/stylesheets/mediaQuery.css">
     <script type="text/javascript" src="assets/libraries/jquery-1.9.0.min.js"></script>
-    <script type="text/javascript" src="assets/libraries/jquery.mobile-1.3.1.min.js"></script>
     <script type="text/javascript" src="assets/libraries/jquery-ui-1.10.0.custom.min.js"></script>
     <script type="text/javascript" src="assets/libraries/strophe.js"></script>
     <script type="text/javascript" src="assets/libraries/strophe.receipts.js"></script>
@@ -27,14 +27,14 @@
     <section id="login-section">
       <header>
           <h1>Konekta</h1>
-          <div class='headIcon' id='iconReg'>&#59136;</div>
+          <div class='headIcon' id='iconReg' onclick="changeToRegSection();">&#59136;</div>
       </header>
       <center>
         <article id="login">
           <form class="loginBox">
              <div>JID: </div><input type="text" id="jid"/>
              <div>Password: </div><input type="password" id="password"/>
-             <input type="button" id="log_button" value="Konekta!" />
+             <input type="button" id="log_button" value="Konekta!" onclick="login();";/>
           </form>
           <div id="login_log"></div>
         </article>
@@ -43,7 +43,7 @@
 
     <section id="register-section">
       <header>
-          <div class='headIcon' id='iconBack'>&#59225;</div>
+          <div class='headIcon' id='iconBack' onclick="changeToLogSection();">&#59225;</div>
           <h1>Konekta - Register</h1>
       </header>
         <article id="register" class="register">
@@ -78,7 +78,7 @@
               <div>Repeat Password*: </div><input type="password" id="rrpassword"/>
             </div>
             <center>
-              <input type="button" id="reg_button" value="Register!" />
+              <input type="button" id="reg_button" value="Register!" onclick="register();"/>
             </center>
           </form>
           <div id="reg_log">
@@ -93,13 +93,20 @@
       <center>
         <article id="home">
           <header>
-            <div class="headIcon" id='iconProfile'>&#59170;</div>
-            <h1>Konekta</h1>
-            <div class="headIcon" id='iconLogout'>&#10006;</div>
+            <div class="headIcon" id='iconProfile' onclick="profile();">&#59170;</div>
+            <div class="headIcon" id='iconMessage' onclick="message();">&#128101;</div>
+            <h1>Chats</h1>
+            <div class="headIcon" id='iconLogout' onclick="logout();">&#10006;</div>
           </header>
-          <div id="roster-area">
-            <ul></ul>
-          </div>
+          <ul id="chat-area-list"></ul>
+        </article>
+        <article id="roster-area">
+          <header>
+            <div class='headIcon' id='iconMenu' onclick="home();">&#8962;</div>
+            <h1>Contacts</h1>
+            <div class="headIcon" id='iconLogout' onclick="logout();">&#10006;</div>
+          </header>
+          <ul></ul>
         </article>
         <div id="chat-area"></div>
       </center>
@@ -107,7 +114,7 @@
 
     <section id="profile-section">
       <header>
-          <div class='headIcon' id='iconMenu'>&#8962;</div>
+          <div class='headIcon' id='iconMenu' onclick="changeToMainSection();">&#8962;</div>
           <h1>Konekta - Profile</h1>
       </header>
         <article id="profile" class="register">
@@ -136,7 +143,7 @@
               <div>Age: </div><input type="date" id="page" size="4"/>
             </div>
             <center>
-              <input type="button" id="prof_button" value="Update!" />
+              <input type="button" id="prof_button" value="Update!" onclick="profileUpdate();"/>
             </center>
           </form>
           <div id="reg_log">

@@ -1,12 +1,12 @@
 $(document).ready(function () {
 
     var kcook = $.parseJSON(readCookie('konekta'));
-    
+
     if(kcook != null && kcook.jid != null){
         $(document).trigger('attach', kcook);
     }
-
-    $("#log_button").click(function(){
+/*
+    $("#log_button").bind(touchEvent, function() {
         $('#jid').attr('disabled', 'disabled');
         $('#password').attr('disabled', 'disabled');
         $('#log_button').attr('disabled', 'disabled');
@@ -91,6 +91,7 @@ $(document).ready(function () {
     $("#iconMenu").click(function(){
         changeToMainSection();
     });
+*/
 });
 
 $(window).bind('unload', function() {
@@ -186,6 +187,7 @@ $(document).bind('disconnected', function () {
     // remove dead connection object
     $('#roster-area ul').empty();
     $('#chat-area').empty();
+    $('#chat-area-list').empty();
     if(konekta.connection){
         konekta.connection.sync = true;
         konekta.connection.flush();
@@ -202,6 +204,69 @@ $(document).bind('contact_added', function (ev,data) {
     var subscribe = $pres({to: data.jid, "type": "subscribe"});
     konekta.connection.send(subscribe);
 });
+
+function login(){
+    $('#jid').attr('disabled', 'disabled');
+    $('#password').attr('disabled', 'disabled');
+    $('#log_button').attr('disabled', 'disabled');
+    $(document).trigger('connect', {
+        jid: $('#jid').val()+'@konekta',
+        password: $('#password').val()
+    });
+}
+
+function profileUpdate(){
+    if(validateProfile()){
+        $(document).trigger('profile_update', {
+            jid: $('#pjid').val() + "@konekta",
+            email: $('#pemail').val(),
+            name: $('#pname').val(),
+            surname: $('#psurname').val(),
+            gender: $('#pgender').val(),
+            age: $('#page').val(),
+        });
+    }
+    else{
+        konekta.log("Error validating profile");
+    }
+}
+
+function profile(){
+    var vcard = konekta.vcard.toArray();
+    if(vcard && vcard.length > 0) {
+        var jid = Strophe.getBareJidFromJid(konekta.connection.jid);
+        var name = $(vcard).find('GIVEN').text();
+        if (!name || name === '') name = konekta.connection.name;
+        $('#pjid').val(jid);
+        $('#pname').val(name);
+        $('#psurname').val($(vcard).find('FAMILY').text());
+        $('#pemail').val($(vcard).find('USERID').text());
+        $('#pgender').val($(vcard).find('GENDER').text());
+        $('#page').val($(vcard).find('BDAY').text());
+    }
+    else {
+        $('#pjid').val(konekta.jid_to_name(konekta.connection.jid));
+        $('#pname').val(konekta.connection.name);
+    }
+    changeToProfSection();
+}
+
+function register(){
+    if(validateRegister()){
+        $(document).trigger('register', {
+            jid: $('#rjid').val(),
+            email: $('#email').val(),
+            name: $('#name').val(),
+            surname: $('#surname').val(),
+            gender: $('#gender').val(),
+            age: $('#age').val(),
+            password: $('#rpassword').val()
+        });
+    }
+    else{
+        konekta.log("Error validating register");
+    }
+}
 
 function logout(){
     eraseCookie('konekta');

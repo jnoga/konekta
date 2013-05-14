@@ -26,28 +26,26 @@ body {
 }
 
 header {
-	z-index: 2;
+	z-index: 100;
 	right: 0px;
 	left: 0px;
 	text-align: center;
 	position: fixed;
 	top: 0px;
 	width: 100%;
-	background-color: rgb(12,82,141);
+	/*background-color: rgb(12,82,141);*/
+	background-color: #2b2a2b;
 	line-height: 40px;
 	height: 40px;
 	border-bottom: solid 2px rgba(0,0,0,0.1);
 }
 
 header h1 {
-	position: absolute;
-	left: 50px;
-	right: 50px;
-	display: inline-block;
 	color: white;
-	font-size: 30px;
-	margin:auto;
-	text-align: center;
+    display: inline-block;
+    font-size: 30px;
+    margin: auto;
+    text-align: center;
 }
 
 .lastact {
@@ -73,11 +71,12 @@ section{
   	margin: 0px;
 	padding: 0px;
 	box-shadow: 15px 15px 15px 15px rgba(0,0,0,0.5);
-	background: rgb(21,138,237);
+	/*background: rgb(21,138,237);*/
+	background-color: #d7cfc4;
 }
 
 #home {
-	background-color: rgb(244, 245, 245);
+	/*background-color: rgb(244, 245, 245);*/
 	margin: 0px;
 	padding: 0px;
 	height: 100%;
@@ -160,6 +159,14 @@ section{
 	width: 100%;
 }
 
+#chat-area-list {
+	margin-top: 55px;
+	margin-bottom: 65px;
+	/*background: rgb(244, 245, 245);*/
+	overflow: hidden;
+	width: 95%;
+}
+
 .chat {
 	margin: 0px;
 	padding: 0px;
@@ -174,12 +181,13 @@ section{
 .msgs{
 	margin-top: 55px;
 	margin-bottom: 65px;
-	background: rgb(21,138,237);
+	/*background: rgb(21,138,237);*/
 	overflow: hidden;
 	width: 90%;
 }
 
 .msg{
+	display: block;
 	position: relative;
 	margin:10px;
 	padding: 10px;
@@ -187,7 +195,7 @@ section{
 	border-radius: 5px;
 	box-shadow: 5px 5px 3px rgba(0,0,0,0.3);
 	background: white;
-	width: 60%;
+	width: 67%;
 
 }
 
@@ -199,10 +207,27 @@ section{
 }
 
 .left{float:left;background: rgb(244,244,244);}
-.left .hora{text-align:left;width: 280px;position:absolute;right:-295px;color:white;font-size: 14px;font-style:italic;margin-top:11px;}
+.left .hora{text-align:left;width: 280px;position:absolute;right:-295px;color:black;font-size: 14px;font-style:italic;margin-top:11px;}
 
-.right{float:right;background: rgb(168,223,254);}
-.right .hora{width:280px;text-align:right;position:absolute;left:-290px;color:white;font-size:14px;font-style:italic;margin-top:7px;}
+.right{float:right;/*background: rgb(168,223,254);*/background: #e4f0d8;}
+.right .hora{width:280px;text-align:right;position:absolute;left:-290px;color:black;font-size:14px;font-style:italic;margin-top:7px;}
+
+.dinfo{
+	width: 100%;
+	display: block;
+	margin: 10px auto;
+}
+
+.dinfo hr{
+	display: inline-block;
+	width: 30%;
+}
+.dtext{
+	background: none repeat scroll 0 0 #cde3f3;
+    border: 1px solid black;
+    border-radius: 5px 5px 5px 5px;
+    display: inline-block;
+}
 
 .check{
 	font-size: 18px;
@@ -225,7 +250,8 @@ section{
 	font-size: 55px;
 	font-family: icons;
 	margin-left: 5px;
-	background-color: #0b416e;
+	/*background-color: #0b416e;*/
+	background-color: #424042;
 	width: 40px;
 	height: 35px;
 	margin-top: 2.4px;
@@ -250,15 +276,21 @@ section{
 	float: right;
 }
 
+#iconMessage{
+	float: left;
+	margin-left: 10px;
+}
+
 #iconLogout{
 	float: right;
 }
 
-#iconSend{
-	margin-left: 2%;
-	color:white;
-	font-size:30px;
+.icon{
+	margin-left: 5px;
+	display: inline-block;
+	font-size:44px;
 	font-family:icons;
+	vertical-align: middle;
 }
 
 #password{
@@ -286,13 +318,15 @@ section{
 }
 
 footer {
-	left: 0;
-	z-index: 2;
+	left: 0px;
+	right: 0px;
+	z-index: 100;
 	width: 100%;
 	font-size: 18px;
 	bottom:0px;
 	position:fixed;
-	background-color: #062846;
+	/*background-color: #062846;*/
+	background-color: #424042;
 	text-align: center;
 	height: 55px;
 	line-height: 55px;
@@ -305,11 +339,17 @@ footer {
 }
 
 #roster-area {
-	margin-top: 55px;
+	display: none;
+	margin-top: 43px;
 	margin-bottom: 65px;
-	background: rgb(244, 245, 245);
+	/*background: rgb(244, 245, 245);*/
 	overflow: hidden;
 	width: 95%;
+}
+
+.roster-contact{
+	display: inline-block;
+	margin-left: 10px;
 }
 
 ul{
