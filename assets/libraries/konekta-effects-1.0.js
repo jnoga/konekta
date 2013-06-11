@@ -1,5 +1,12 @@
 function changeToMainSection(){
-
+    document.getElementById('iconHome').style.display = 'none';
+    document.getElementById('iconMain').style.display = 'none';
+    document.getElementById('iconBack').style.display = 'none';
+    document.getElementById('iconProfile').style.display = 'inline-block';
+    document.getElementById('iconMessage').style.display = 'inline-block';
+    document.getElementById('iconReg').style.display = 'none';
+    document.getElementById('iconLogout').style.display = 'inline-block';
+    document.getElementById('headTitle').innerHTML = 'Chats';
     $('section').each(function () {
         $(this).attr("style","display:none;");
     });
@@ -9,6 +16,14 @@ function changeToMainSection(){
 }
 
 function changeToRegSection(){
+    document.getElementById('iconHome').style.display = 'none';
+    document.getElementById('iconMain').style.display = 'none';
+    document.getElementById('iconBack').style.display = 'inline-block';
+    document.getElementById('iconProfile').style.display = 'none';
+    document.getElementById('iconMessage').style.display = 'none';
+    document.getElementById('iconReg').style.display = 'none';
+    document.getElementById('iconLogout').style.display = 'none';
+    document.getElementById('headTitle').innerHTML = 'Register';
     $('section').each(function () {
         $(this).attr("style","display:none;");
     });
@@ -16,6 +31,14 @@ function changeToRegSection(){
 }
 
 function changeToProfSection() {
+    document.getElementById('iconHome').style.display = 'none';
+    document.getElementById('iconMain').style.display = 'inline-block';
+    document.getElementById('iconBack').style.display = 'none';
+    document.getElementById('iconProfile').style.display = 'none';
+    document.getElementById('iconMessage').style.display = 'none';
+    document.getElementById('iconReg').style.display = 'none';
+    document.getElementById('iconLogout').style.display = 'inline-block';
+    document.getElementById('headTitle').innerHTML = 'Profile';
     $('section').each(function () {
         $(this).attr("style","display:none;");
     });
@@ -24,6 +47,14 @@ function changeToProfSection() {
 }
 
 function changeToLogSection(){
+    document.getElementById('iconHome').style.display = 'none';
+    document.getElementById('iconMain').style.display = 'none';
+    document.getElementById('iconBack').style.display = 'none';
+    document.getElementById('iconProfile').style.display = 'none';
+    document.getElementById('iconMessage').style.display = 'none';
+    document.getElementById('iconReg').style.display = 'inline-block';
+    document.getElementById('iconLogout').style.display = 'none';
+    document.getElementById('headTitle').innerHTML = 'Konekta - Login';
     $('section').each(function () {
         $(this).attr("style","display:none;");
     });
@@ -31,6 +62,15 @@ function changeToLogSection(){
 }
 
 function home(){
+    document.getElementById('foot').style.display = 'none';
+    document.getElementById('iconHome').style.display = 'none';
+    document.getElementById('iconMain').style.display = 'none';
+    document.getElementById('iconBack').style.display = 'none';
+    document.getElementById('iconProfile').style.display = 'inline-block';
+    document.getElementById('iconMessage').style.display = 'inline-block';
+    document.getElementById('iconReg').style.display = 'none';
+    document.getElementById('iconLogout').style.display = 'inline-block';
+    document.getElementById('headTitle').innerHTML = 'Chats';
     //$("#roster-area").attr('style', 'display: none;');
     $('article').each(function () {
         $(this).attr("style","display:none;");
@@ -40,6 +80,14 @@ function home(){
 }
 
 function message(){
+    document.getElementById('iconHome').style.display = 'inline-block';
+    document.getElementById('iconMain').style.display = 'none';
+    document.getElementById('iconBack').style.display = 'none';
+    document.getElementById('iconProfile').style.display = 'inline-block';
+    document.getElementById('iconMessage').style.display = 'none';
+    document.getElementById('iconReg').style.display = 'none';
+    document.getElementById('iconLogout').style.display = 'inline-block';
+    document.getElementById('headTitle').innerHTML = 'Contacts';
     $("#chat-area-list").attr('style', 'display: none;');
     $("#roster-area").attr('style', 'display: block;');
     $("#home").attr('style', 'display: none;');

@@ -1,5 +1,6 @@
 var konekta = {
     BOSH_SERVICE: 'http://5.39.83.108:7070/http-bind/',
+    //BOSH_SERVICE: 'http://localhost:7070/http-bind/',
     connection: null,
     data: null,
     vcard: null,
@@ -80,7 +81,7 @@ var konekta = {
                         '<div class="icon">&#9993;</div>'+
                         '<div class="roster-contact offline">' +
                         '<div class="roster-name">' + name +
-                        " <div id='um-"+jid_id+"' style='display: inline-block;'></div>"+
+                        " <div class='um' id='um-"+jid_id+"' ></div>"+
                         '</div>' +
                         //'<div class="roster-jid">' + jid + '</div></div>'+
                         '</div>'+
@@ -114,7 +115,7 @@ var konekta = {
                 '<div class="icon">&#9993;</div>'+
                 "<div class='" + ($('#' + jid_id).attr('class') || "roster-contact offline") + '>'+
                 "<div class='roster-name'>" + name + 
-                " <div id='um-"+jid_id+"' style='display: inline-block;'></div>"+
+                " <div class='um' id='um-"+jid_id+"' ></div>"+
                 '</div>' +
                 //"<div class='roster-jid'" + jid +"</div>" +
                 "</div>"+
@@ -254,17 +255,14 @@ var konekta = {
         //Create new chat element if doesn't exists
         if ($('#chat-' + jid_id).length === 0) {
             $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
-            $('#chat-' + jid_id).append(
-                "<header><div onclick='home();' class='headIcon' id='iconMenu'>&#8962;</div><h1>"+jid+" <div class='lastact' id='la-"+jid_id+"'></div></h1></header>" +
-                "<div class='msgs'></div>" +
-                "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return konekta.enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'><div class='icon' onclick='konekta.sendMsg(\""+jid_id+"\", \""+jid+"\");'>&#128319;</div></footer>");
+            $('#chat-' + jid_id).append("<div class='msgs'></div>");
             $('#chat-' + jid_id).data('jid', jid);
             //Add to chat list
             var contact_html = $("<li id='" + jid_id + "-l' onclick='konekta.openChat(\""+jid+"\");'>" +
                 '<div class="icon">&#59168;</div>'+
                 "<div class='" + ($('#' + jid_id).attr('class') || "roster-contact offline") + "'>" +
                 "<div class='roster-name'>" + name + 
-                " <div id='um-"+jid_id+"' style='display: inline-block;'></div>"+
+                " <div class='um' id='um-"+jid_id+"' ></div>"+
                 '</div>' +
                 //"<div class='roster-jid'" + jid +"</div>" +
                 "</div>"+
@@ -320,9 +318,10 @@ var konekta = {
         }
         else{
             um++;
+            $('#um-'+jid_id).attr('style', 'display:inline-block;')
         }
         $('#'+ jid_id).data('um', um);
-        $('#um-'+ jid_id).text((um === 0)?'':'('+um+')');
+        $('#um-'+ jid_id).text((um === 0)?'':' '+um+' ');
 
         return true;
     },
@@ -339,12 +338,13 @@ var konekta = {
         var value = '';
 
         if(last === '0'){
-            $('#la-' + jid_id).text('Online');
+            value = 'Online';
         }
         else{
             value = parseSeconds(last);
-            $('#la-' + jid_id).text(value);
         }
+
+        document.getElementById('headTitle').innerHTML = $('#chat-' + jid_id).data('name') + '<div class="lastact">'+value+'</div>';
 
         return true;
     },
@@ -352,31 +352,35 @@ var konekta = {
     openChat: function (jid){
         var jid_id = konekta.jid_to_id(jid);
         var name = $('#' + jid_id).find(".roster-name").text();
-        /*$("#home #iconMenu").attr('style', 'display:block;');
-        $("#home #iconProfile").attr('style', 'display:none;');
-        $("#home #iconMessage").attr('style', 'display:none;');
-        $("#home header h1").text(name);
-        $("#home header h1").append("<div class='lastact' id='la-"+jid_id+"'></div>");
-        */
+
+        document.getElementById('headTitle').innerHTML = name;
+        document.getElementById('iconHome').style.display = 'inline-block';
+        document.getElementById('iconMain').style.display = 'none';
+        document.getElementById('iconBack').style.display = 'none';
+        document.getElementById('iconProfile').style.display = 'none';
+        document.getElementById('iconMessage').style.display = 'none';
+        document.getElementById('iconReg').style.display = 'none';
+        document.getElementById('iconLogout').style.display = 'inline-block';
+        document.getElementById('foot').style.display = 'block';
         //Open the user chat...
         if ($('#chat-' + jid_id).length === 0) {
             $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
-            $('#chat-' + jid_id).append(
-                "<header><div onclick='home();' class='headIcon' id='iconMenu'>&#8962;</div><h1>"+name+"  <div class='lastact' id='la-"+jid_id+"'></div></h1></header>" +
-                "<div class='msgs'></div>" +
-                "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return konekta.enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'><div>&#128319;</div></footer>");
+            $('#chat-' + jid_id).append("<div class='msgs'></div>");
             $('#chat-' + jid_id).data('jid', jid);
+            $('#chat-' + jid_id).data('name', name);
             var contact_html = $("<li id='" + jid_id + "-l' onclick='konekta.openChat(\""+jid+"\");'>" +
                 '<div class="icon">&#59168;</div>'+
                 "<div class='" + ($('#' + jid_id).attr('class') || "roster-contact offline") + "'>"+
                 "<div class='roster-name'>" + name + 
-                " <div id='um-"+jid_id+"' style='display: inline-block;'></div>"+
+                " <div class='um' id='um-"+jid_id+"' ></div>"+
                 '</div>' +
                 //"<div class='roster-jid'" + jid +"</div>" +
                 "</div>"+
                 "</li>");
             $("#chat-area-list").append(contact_html);
         }
+        $('#chat_input').attr('onKeyPress', 'return konekta.enter(this,event,\"'+jid_id+'\", \"'+jid+'\")');
+        $('#sendicon').attr('onclick', 'return konekta.sendMsg(\"'+jid_id+'\", \"'+jid+'\")');
         //Show/focus on the users chat
         $("#chat-area").attr('style', 'display: block;');
         $(".chat").each(function( index ){
@@ -389,14 +393,16 @@ var konekta = {
         $('#chat-' + jid_id + ' input').focus();
         $('#'+ jid_id).data('um', 0);
         $('#um-'+ jid_id).text('');
-
+        $('#um-'+ jid_id).attr('style', 'display:none;');
+        //Scroll to las message
+        $('#chat-' + jid_id).scrollTop($('#chat-' + jid_id + ' .msgs').height());
         var iq = $iq({type:'get', to: jid}).c('query', {xmlns: 'jabber:iq:last'});
         konekta.connection.sendIQ(iq, konekta.contact_status);
     },
 
     sendMsg: function (jid_id, jid) {
         //var elem = document.getElementById(id);
-        var elem = $("#i"+jid_id);
+        var elem = $("#chat_input");
 
         if(elem.val() !== ""){
             var date = new Date();
@@ -461,7 +467,7 @@ var konekta = {
 
     print_archive_messages: function(messages){
         var c_jid = Strophe.getBareJidFromJid(konekta.connection.jid);
-        console.log('print_archive_messages');
+        //console.log('print_archive_messages');
         for(var i = 0; messages.length > i; i++) {
             var msg = messages[i];
             
@@ -489,16 +495,14 @@ var konekta = {
 
             if ($('#chat-' + jid_id).length === 0) {
                 $('#chat-area').append('<article class="chat" id="chat-'+jid_id+'"></article>');
-                $('#chat-' + jid_id).append(
-                    "<header><div onclick='home();' class='headIcon' id='iconMenu'>&#8962;</div><h1>"+name+" <div class='lastact' id='la-"+jid_id+"'></div></h1></header>" +
-                    "<div class='msgs'></div>" +
-                    "<footer><input type='text' id='i"+jid_id+"' onKeyPress='return konekta.enter(this,event,\""+jid_id+"\", \""+jid+"\")' class='roster-input'><div class='icon' onclick='konekta.sendMsg(\""+jid_id+"\", \""+jid+"\");'>&#128319;</div></footer>");
+                $('#chat-' + jid_id).append("<div class='msgs'></div>"); 
                 $('#chat-' + jid_id).data('jid', jid);
+                $('#chat-' + jid_id).data('name', name);
                 var contact_html = $("<li id='" + jid_id + "-l' onclick='konekta.openChat(\""+jid+"\");'>" +
                     '<div class="icon">&#59168;</div>'+
                     "<div class='roster-contact offline'>" +
                     "<div class='roster-name'>" + name + 
-                    " <div id='um-"+jid_id+"' style='display: inline-block;'></div>"+
+                    " <div class='um' id='um-"+jid_id+"' ></div>"+
                     '</div>' +
                     //"<div class='roster-jid'" + jid +"</div>" +
                     "</div>"+
@@ -510,6 +514,8 @@ var konekta = {
                 // add the new message
                 var prev_date = $('#chat-' + jid_id).data('lmsg');
                 var d_string = parseOnlyHour(date);
+                $('#chat-'+ jid_id).data('lmsgd', date);
+                $('#chat-'+ jid_id).data('lmsgt', body);
                 if(!compareDate(prev_date, date)){
                     $('#chat-' + jid_id + ' .msgs').append("<div class='dinfo'><hr/><div class='dtext'>"+parseOnlyDay(date)+"</div><hr/></div>");
                     $('#chat-' + jid_id).data('lmsg',date);

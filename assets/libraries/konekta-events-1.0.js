@@ -194,6 +194,7 @@ $(document).bind('disconnected', function () {
         konekta.connection.disconnect();
         konekta.connection=null;
     }
+    changeToLogSection();
 });
 
 $(document).bind('contact_added', function (ev,data) {

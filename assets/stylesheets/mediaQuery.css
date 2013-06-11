@@ -49,4 +49,7 @@ only screen and (max-device-width : 660px){
     width: auto;
     margin-bottom: 20px;
   }
+  .msg{
+    max-width: 163px;
+  }
 }
