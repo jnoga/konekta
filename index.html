@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8" />
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="format-detection" content="telephone=no">
+    <meta charset="UTF-8" />
+    <meta http-equiv="cleartype" content="on">
     <link rel="stylesheet" type="text/css" href="assets/stylesheets/style.css">
     <link rel="stylesheet" type="text/css" href="assets/stylesheets/mediaQuery.css">
     <script type="text/javascript" src="assets/libraries/jquery-1.9.0.min.js"></script>
@@ -23,12 +24,19 @@
     <title>Konekta</title>
   </head>
   <body>
+    
+    <header>
+      <div class='headIcon' id='iconHome' onclick="home();">&#8962;</div>
+      <div class='headIcon' id='iconMain' onclick="changeToMainSection();">&#8962;</div>
+      <div class='headIcon' id='iconBack' onclick="changeToLogSection();">&#59225;</div>
+      <div class="headIcon" id='iconProfile' onclick="profile();">&#59170;</div>
+      <div class="headIcon" id='iconMessage' onclick="message();">&#128101;</div>
+      <h1 id="headTitle">Konekta</h1>
+      <div class='headIcon' id='iconReg' onclick="changeToRegSection();">&#59136;</div>
+      <div class="headIcon" id='iconLogout' onclick="logout();">&#10006;</div>
+    </header>
 
     <section id="login-section">
-      <header>
-          <h1>Konekta</h1>
-          <div class='headIcon' id='iconReg' onclick="changeToRegSection();">&#59136;</div>
-      </header>
       <center>
         <article id="login">
           <form class="loginBox">
@@ -42,10 +50,6 @@
     </section>
 
     <section id="register-section">
-      <header>
-          <div class='headIcon' id='iconBack' onclick="changeToLogSection();">&#59225;</div>
-          <h1>Konekta - Register</h1>
-      </header>
         <article id="register" class="register">
           <form class="registerBox">
             <div class="row">
@@ -92,20 +96,9 @@
     <section id="main-section">
       <center>
         <article id="home">
-          <header>
-            <div class="headIcon" id='iconProfile' onclick="profile();">&#59170;</div>
-            <div class="headIcon" id='iconMessage' onclick="message();">&#128101;</div>
-            <h1>Chats</h1>
-            <div class="headIcon" id='iconLogout' onclick="logout();">&#10006;</div>
-          </header>
           <ul id="chat-area-list"></ul>
         </article>
         <article id="roster-area">
-          <header>
-            <div class='headIcon' id='iconMenu' onclick="home();">&#8962;</div>
-            <h1>Contacts</h1>
-            <div class="headIcon" id='iconLogout' onclick="logout();">&#10006;</div>
-          </header>
           <ul></ul>
         </article>
         <div id="chat-area"></div>
@@ -113,10 +106,6 @@
     </section>
 
     <section id="profile-section">
-      <header>
-          <div class='headIcon' id='iconMenu' onclick="changeToMainSection();">&#8962;</div>
-          <h1>Konekta - Profile</h1>
-      </header>
         <article id="profile" class="register">
           <form class="registerBox">
             <div class="row">
@@ -150,6 +139,8 @@
           </div>
         </article>
     </section>
-
+    <footer id='foot'>
+      <input type='text' id='chat_input' class='roster-input'><div id='sendicon' class='icon' >&#128319;</div>
+    </footer>
   </body>
 </html>
