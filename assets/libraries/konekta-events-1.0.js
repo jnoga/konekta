@@ -194,6 +194,7 @@ $(document).bind('disconnected', function () {
         konekta.connection.disconnect();
         konekta.connection=null;
     }
+    document.getElementById('foot').style.display = 'none';
     changeToLogSection();
 });
 
