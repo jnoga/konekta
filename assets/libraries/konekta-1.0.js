@@ -141,9 +141,9 @@ var konekta = {
 
         var ptype = $(presence).attr('type');
         var from = $(presence).attr('from');
-
+        var jid_id = konekta.jid_to_id(from);
         konekta.presence_session_control(from);
-
+        console.log($('#chat-' + jid_id).css('display'));
         if (ptype === 'subscribe') {
             konekta.log("request from: " + from);
             konekta.pending_subscriber = from;
@@ -151,27 +151,29 @@ var konekta = {
             konekta.connection.send($pres({to: konekta.pending_subscriber, "type": "subscribed"}));
             konekta.pending_subscriber = null;
         } else if (ptype !== 'error') {
-            var contact = $('#roster-area li#' + konekta.jid_to_id(from) + ' .roster-contact')
+            var contact = $('#roster-area li#' + jid_id + ' .roster-contact')
                 .removeClass('online')
                 .removeClass('away')
                 .removeClass('offline');
 
             if (ptype === 'unavailable') {
                 contact.addClass('offline');
-                if($('#chat-' + konekta.jid_to_id(from)).length > 0){
-                        $('#la-' + konekta.jid_to_id(from)).text(parseDate(new Date()));
-                    }
+                if($('#chat-area').css('display') === 'block' && $('#chat-' + jid_id).css('display') === 'block'){
+                    //$('#la-' + konekta.jid_to_id(from)).text(parseDate(new Date()));
+                    document.getElementById('headTitle').innerHTML = $('#chat-'+jid_id).data('name')+ '<div class="lastact">'+parseDate(new Date())+'</div>';
+                }
             } else {
                 var show = $(presence).find('show').text();
                 if (show === '' || show === 'chat') {
                     contact.addClass('online');
-                    if($('#chat-' + konekta.jid_to_id(from)).length > 0){
-                        $('#la-' + konekta.jid_to_id(from)).text('Online');
+                    if($('#chat-area').css('display') === 'block' && $('#chat-' + jid_id).css('display') === 'block'){
+                        //$('#la-' + konekta.jid_to_id(from)).text('Online');
+                        document.getElementById('headTitle').innerHTML = $('#chat-'+jid_id).data('name')+ '<div class="lastact">Online</div>';
                     }
                 } else {
                     contact.addClass('away');
-                    if($('#chat-' + konekta.jid_to_id(from)).length > 0){
-                        $('#la-' + konekta.jid_to_id(from)).text('Away');
+                    if($('#chat-area').css('display') === 'block' && $('#chat-' + jid_id).css('display') === 'block'){
+                        document.getElementById('headTitle').innerHTML = $('#chat-'+jid_id).data('name')+ '<div class="lastact">Away</div>';
                     }
                 }
             }
